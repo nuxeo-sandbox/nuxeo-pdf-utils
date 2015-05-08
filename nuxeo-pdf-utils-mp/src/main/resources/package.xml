@@ -1,10 +1,10 @@
 <package type="addon" name="nuxeo-pdf-utils" version="@VERSION@">
-  <title>Nuxeo Tagging Operations</title>
+  <title>Nuxeo PDF Utils Operations</title>
   <description>
-    <p>This addon activates the Nuxeo Tagging Operations addon.</p>
-    <p>This addon adds new features as explained <a href="https://github.com/thibarg/nuxeo-pdf-utils">here</a></p>
+    <p>This addon activates the Nuxeo PDF Utils Operations addon.</p>
+    <p>This addon adds new features as explained <a href="https://github.com/nuxeo-sandbox/nuxeo-pdf-utils">here</a></p>
   </description>
-  <home-page>https://github.com/thibarg/nuxeo-pdf-utils</home-page>
+  <home-page>https://github.com/nuxeo-sandbox/nuxeo-pdf-utils</home-page>
   <vendor>Nuxeo</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
