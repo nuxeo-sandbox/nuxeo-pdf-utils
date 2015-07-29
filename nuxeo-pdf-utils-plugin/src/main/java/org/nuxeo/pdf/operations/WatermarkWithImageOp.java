@@ -31,16 +31,13 @@ import org.nuxeo.pdf.PDFUtils;
 import org.nuxeo.pdf.PDFWatermarking;
 
 /**
- * Returns a <i>new</i> blob combining the input pdf and the image (stored in a
- * blob) referenced either by <code>imageContextVarName</code> (name of a
- * Context variable holding the blob) of by <code>imageDocRef</code> (path or ID
- * of a document whose <code>file:content</code> is the image to use). If the
- * value of <code>scale</code> is <= 0 it is reset to 1.0.
+ * Returns a <i>new</i> blob combining the input pdf and the image (stored in a blob) referenced either by
+ * <code>imageContextVarName</code> (name of a Context variable holding the blob) of by <code>imageDocRef</code> (path
+ * or ID of a document whose <code>file:content</code> is the image to use). If the value of <code>scale</code> is <= 0
+ * it is reset to 1.0.
  * <p>
- * If code>imageDocRef</code> is used, an UnrestrictedSession fetches its blob,
- * so the PDF can be watermarked even if current user has not enough right to
- * read the watermark itself.
- *
+ * If code>imageDocRef</code> is used, an UnrestrictedSession fetches its blob, so the PDF can be watermarked even if
+ * current user has not enough right to read the watermark itself.
  */
 @Operation(id = WatermarkWithImageOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Watermark with Image", description = "Returns a <i>new</i> blob combining the input pdf and the image (stored in a blob) referenced either by <code>imageContextVarName</code> (name of a Context variable holding the blob) of by <code>imageDoc</code> (path or ID of a document whose <code>file:content</code> is the image to use). If <code>scale</code> is <= 0 it is reste to 1.0. If code>imageDocRef</code> is used, an UnrestrictedSession fetches its blob, so the PDF can be watermarked even if current user has not enough right to read the watermark itself.")
 public class WatermarkWithImageOp {
@@ -66,7 +63,7 @@ public class WatermarkWithImageOp {
     protected long y = 0;
 
     @Param(name = "scale", required = false, values = { "1.0" })
-    protected Double scale = 1.0;
+    protected String scale = "1.0";
 
     @OperationMethod(collector = BlobCollector.class)
     public Blob run(Blob inBlob) throws ClientException {
@@ -86,8 +83,7 @@ public class WatermarkWithImageOp {
         }
 
         PDFWatermarking pdfw = new PDFWatermarking(inBlob);
-        result = pdfw.watermarkWithImage(blobImage, (int) x, (int) y,
-                scale.floatValue());
+        result = pdfw.watermarkWithImage(blobImage, (int) x, (int) y, Float.parseFloat(scale));
 
         return result;
     }
