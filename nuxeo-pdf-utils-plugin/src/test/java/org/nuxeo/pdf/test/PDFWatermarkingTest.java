@@ -430,7 +430,7 @@ public class PDFWatermarkingTest {
 
         ctx.put("theBlobImage", overlayPictureBlob);
         chain.add(WatermarkWithImageOp.ID).set("imageContextVarName",
-                "theBlobImage").set("x", 200).set("y", "400").set("scale", 2.0);
+                "theBlobImage").set("x", 200).set("y", "400").set("scale", "2.0");
 
         Blob result = (Blob) automationService.run(ctx, chain);
         assertNotNull(result);
