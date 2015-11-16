@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -33,15 +34,13 @@ import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationChain;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.util.BlobList;
-import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
+import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.test.CoreFeature;
-import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.pdf.PDFMerge;
 import org.nuxeo.pdf.operations.MergePDFsWithBlobsInputOp;
 import org.nuxeo.pdf.operations.MergePDFsWithDocsInputOp;
@@ -52,8 +51,7 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import com.google.inject.Inject;
 
 @RunWith(FeaturesRunner.class)
-@Features({ PlatformFeature.class, CoreFeature.class,
-        EmbeddedAutomationServerFeature.class })
+@Features({ AutomationFeature.class })
 @Deploy({ "nuxeo-pdf-utils-plugin" })
 public class PDFMergeTest {
 
@@ -70,6 +68,7 @@ public class PDFMergeTest {
     protected DocumentModel testDocsFolder, docMergePDF1, docMergePDF2,
             docMergePDF3;
 
+    @SuppressWarnings("unused")
     private static Log log = LogFactory.getLog(PDFMergeTest.class);
 
     @Inject

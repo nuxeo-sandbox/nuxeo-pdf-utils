@@ -24,7 +24,7 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PageExtractor;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
@@ -128,7 +128,7 @@ public class PDFPageExtractor {
             extracted.close();
 
         } catch (IOException | COSVisitorException e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         } finally {
             if (pdfDoc != null) {
                 try {

@@ -28,7 +28,7 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.pdf.PDFMerge;
 
 /**
@@ -63,7 +63,7 @@ public class MergePDFsWithBlobsInputOp {
     protected String pdfAuthor = "";
 
     @OperationMethod
-    public Blob run(Blob inBlob) throws ClientException {
+    public Blob run(Blob inBlob) throws NuxeoException {
 
         PDFMerge pdfm = new PDFMerge(inBlob);
 
@@ -71,7 +71,7 @@ public class MergePDFsWithBlobsInputOp {
     }
 
     @OperationMethod
-    public Blob run(BlobList inBlobs) throws ClientException {
+    public Blob run(BlobList inBlobs) throws NuxeoException {
 
         PDFMerge pdfm = new PDFMerge(inBlobs.get(0));
         int max = inBlobs.size();
@@ -82,7 +82,7 @@ public class MergePDFsWithBlobsInputOp {
         return doMerge(pdfm);
     }
 
-    protected Blob doMerge(PDFMerge inMergeTool) throws ClientException {
+    protected Blob doMerge(PDFMerge inMergeTool) throws NuxeoException {
 
         // The first blob(s) has(have) already been added
 
@@ -97,7 +97,7 @@ public class MergePDFsWithBlobsInputOp {
             if (ctx.get(toAppendListVarName) instanceof BlobList) {
                 inMergeTool.addBlobs((BlobList) ctx.get(toAppendListVarName));
             } else {
-                throw new ClientException(
+                throw new NuxeoException(
                         ctx.get(toAppendListVarName).getClass()
                                 + " is not a Collection");
             }
@@ -107,7 +107,7 @@ public class MergePDFsWithBlobsInputOp {
         try {
             return inMergeTool.merge(fileName, pdfTitle, pdfSubject, pdfAuthor);
         } catch (COSVisitorException | IOException e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         }
     }
 }

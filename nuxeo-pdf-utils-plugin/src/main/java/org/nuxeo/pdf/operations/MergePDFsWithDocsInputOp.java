@@ -29,7 +29,7 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
@@ -98,7 +98,7 @@ public class MergePDFsWithDocsInputOp {
     protected String pdfAuthor = "";
 
     @OperationMethod
-    public Blob run(DocumentModel inDoc) throws ClientException {
+    public Blob run(DocumentModel inDoc) throws NuxeoException {
 
         PDFMerge pdfm = new PDFMerge(inDoc, xpath);
 
@@ -106,14 +106,14 @@ public class MergePDFsWithDocsInputOp {
     }
 
     @OperationMethod
-    public Blob run(DocumentModelList inDocs) throws ClientException {
+    public Blob run(DocumentModelList inDocs) throws NuxeoException {
 
         PDFMerge pdfm = new PDFMerge(inDocs, xpath);
 
         return doMerge(pdfm);
     }
 
-    protected Blob doMerge(PDFMerge inMergeTool) throws ClientException {
+    protected Blob doMerge(PDFMerge inMergeTool) throws NuxeoException {
 
         // Append the single blob
         if (toAppendVarName != null && !toAppendVarName.isEmpty()) {
@@ -126,7 +126,7 @@ public class MergePDFsWithDocsInputOp {
             if (ctx.get(toAppendListVarName) instanceof BlobList) {
                 inMergeTool.addBlobs((BlobList) ctx.get(toAppendListVarName));
             } else {
-                throw new ClientException(
+                throw new NuxeoException(
                         ctx.get(toAppendListVarName).getClass()
                                 + " is not a Collection");
             }
@@ -138,7 +138,7 @@ public class MergePDFsWithDocsInputOp {
                 inMergeTool.addBlobs((String[]) ctx.get(toAppendDocIDsVarName),
                         xpath, session);
             } else {
-                throw new ClientException(
+                throw new NuxeoException(
                         ctx.get(toAppendDocIDsVarName).getClass()
                                 + " is not a String[]");
             }
@@ -148,7 +148,7 @@ public class MergePDFsWithDocsInputOp {
         try {
             return inMergeTool.merge(fileName, pdfTitle, pdfSubject, pdfAuthor);
         } catch (COSVisitorException | IOException e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         }
     }
 }

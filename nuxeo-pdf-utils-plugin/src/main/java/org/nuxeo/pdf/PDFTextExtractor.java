@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
@@ -73,7 +73,7 @@ public class PDFTextExtractor {
                 extractedAllAsString = stripper.getText(pdfDoc);
 
             } catch (IOException e) {
-                throw new ClientException(e);
+                throw new NuxeoException(e);
             } finally {
                 if (pdfDoc != null) {
                     try {

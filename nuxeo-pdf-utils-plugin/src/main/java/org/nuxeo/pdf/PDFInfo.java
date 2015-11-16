@@ -37,10 +37,9 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.platform.picture.api.BlobHelper;
 
 /**
  * The class will parse the info embedded in a PDF, and return them either
@@ -172,7 +171,7 @@ public class PDFInfo {
      */
     public void setParseWithXMP(boolean inValue) {
         if (alreadyParsed && doXMP != inValue) {
-            throw new ClientException(
+            throw new NuxeoException(
                     "Value of 'doXML' cannot be modified after the blob has been already parsed.");
         }
         doXMP = inValue;
@@ -191,20 +190,17 @@ public class PDFInfo {
      * <code>toHashMap()</code> or <code>toString()</code>) or individual info
      * (see all getters)
      *
-     * @throws ClientException
+     * @throws NuxeoException
      *
      * @since 5.9.5
      */
-    public void run() throws ClientException {
+    public void run() throws NuxeoException {
 
         // In case the caller calls several time the run() method
         if (!alreadyParsed) {
 
             fileName = pdfBlob.getFilename();
-            // Getting the file size os ok only if the blob is already backed by
-            // a
-            // File. If it is pure Stream, we give up
-            File pdfFile = BlobHelper.getFileFromBlob(pdfBlob);
+            File pdfFile = pdfBlob.getFile();
             if (pdfFile == null) {
                 fileSize = -1;
             } else {
@@ -240,7 +236,10 @@ public class PDFInfo {
                 mediaBoxHeightInPoints = -1;
                 cropBoxWidthInPoints = -1;
                 cropBoxHeightInPoints = -1;
+                
+                @SuppressWarnings("unchecked")
                 List<PDPage> allPages = docCatalog.getAllPages();
+                
                 boolean gotMediaBox = false;
                 boolean gotCropBox = false;
                 for (PDPage page : allPages) {
@@ -287,7 +286,7 @@ public class PDFInfo {
 
             } catch (IOException | BadSecurityHandlerException
                     | CryptographyException e) {
-                throw new ClientException(/*
+                throw new NuxeoException(/*
                                            * "Cannot get PDF info: " +
                                            * e.getMessage(),
                                            */e);

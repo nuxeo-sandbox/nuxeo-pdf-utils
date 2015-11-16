@@ -39,13 +39,11 @@ import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationChain;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.util.Properties;
-import org.nuxeo.ecm.automation.test.EmbeddedAutomationServerFeature;
+import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.test.CoreFeature;
-import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.pdf.PDFWatermarking;
 import org.nuxeo.pdf.operations.WatermarkWithImageOp;
 import org.nuxeo.pdf.operations.WatermarkWithPDFOp;
@@ -57,8 +55,7 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import com.google.inject.Inject;
 
 @RunWith(FeaturesRunner.class)
-@Features({ PlatformFeature.class, CoreFeature.class,
-        EmbeddedAutomationServerFeature.class })
+@Features({ AutomationFeature.class })
 @Deploy({ "nuxeo-pdf-utils-plugin" })
 public class PDFWatermarkingTest {
 
@@ -213,7 +210,7 @@ public class PDFWatermarkingTest {
 
         pdfw.setText(watermark).setXPosition(100).setYPosition(100).setAlphaColor(
                 0.3f).setFontSize(12f).setTextRotation(45);
-        Blob result = pdfw.watermark();
+        /*Blob result =*/ pdfw.watermark();
 
         // When the text is rotated, extracting the full text form a page as is
         // done in checkHasWatermarkOnAllPages() sometime does not find the

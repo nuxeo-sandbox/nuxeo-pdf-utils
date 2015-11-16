@@ -25,7 +25,7 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.pdf.PDFUtils;
 import org.nuxeo.pdf.PDFWatermarking;
@@ -66,7 +66,7 @@ public class WatermarkWithImageOp {
     protected String scale = "1.0";
 
     @OperationMethod(collector = BlobCollector.class)
-    public Blob run(Blob inBlob) throws ClientException {
+    public Blob run(Blob inBlob) throws NuxeoException {
 
         Blob result = null;
         Blob blobImage = null;

@@ -23,7 +23,7 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
@@ -161,7 +161,7 @@ public class PDFUtils {
         }
 
         @Override
-        public void run() throws ClientException {
+        public void run() throws NuxeoException {
             if (idOrPath.startsWith("/")) {
                 doc = session.getDocument(new PathRef(idOrPath));
             } else {

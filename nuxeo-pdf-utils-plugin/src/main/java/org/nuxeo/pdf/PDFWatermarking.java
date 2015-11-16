@@ -39,7 +39,7 @@ import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.pdf.PDFUtils;
@@ -125,11 +125,11 @@ public class PDFWatermarking {
      *
      * @return a new Blob with the watermark on each page
      *
-     * @throws ClientException
+     * @throws NuxeoException
      *
      * @since 6.0
      */
-    public Blob watermark() throws ClientException {
+    public Blob watermark() throws NuxeoException {
 
         Blob result = null;
         PDDocument pdfDoc = null;
@@ -151,7 +151,7 @@ public class PDFWatermarking {
                 return result;
 
             } catch (IOException e) {
-                throw new ClientException(e);
+                throw new NuxeoException(e);
             }
         }
 
@@ -239,7 +239,7 @@ public class PDFWatermarking {
             result = PDFUtils.saveInTempFile(pdfDoc);
 
         } catch (IOException | COSVisitorException e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         } finally {
             if (contentStream != null) {
                 try {
@@ -253,7 +253,7 @@ public class PDFWatermarking {
         return result;
     }
 
-    public Blob watermarkWithPdf(Blob inBlob) throws ClientException {
+    public Blob watermarkWithPdf(Blob inBlob) throws NuxeoException {
 
         Blob result = null;
         PDDocument pdfDoc = null;
@@ -269,7 +269,7 @@ public class PDFWatermarking {
             result = PDFUtils.saveInTempFile(pdfDoc);
 
         } catch (IOException | COSVisitorException e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         } finally {
             PDFUtils.closeSilently(pdfDoc, pdfOverlayDoc);
         }
@@ -278,7 +278,7 @@ public class PDFWatermarking {
     }
 
     public Blob watermarkWithImage(Blob inBlob, int x, int y, float scale)
-            throws ClientException {
+            throws NuxeoException {
 
         Blob result = null;
         PDDocument pdfDoc = null;
@@ -317,7 +317,7 @@ public class PDFWatermarking {
             result = PDFUtils.saveInTempFile(pdfDoc);
 
         } catch (IOException | COSVisitorException e) {
-            throw new ClientException(e);
+            throw new NuxeoException(e);
         } finally {
             if (contentStream != null) {
                 try {
