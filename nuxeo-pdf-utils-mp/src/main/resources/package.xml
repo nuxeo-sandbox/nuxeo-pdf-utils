@@ -16,6 +16,7 @@
   <platforms>
     <platform>cap-@VERSION@</platform>
     <platform>cap-7.10</platform>
+    <platform>cap-8.1</platform>
   </platforms>
 <!-- 
   <dependencies>
