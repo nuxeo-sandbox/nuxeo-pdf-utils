@@ -112,7 +112,8 @@ public class PDFInfoTest {
         pdfDocModel = coreSession.saveDocument(pdfDocModel);
         assertNotNull(pdfDocModel);
         
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'", Locale.ENGLISH);
+        //dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'", Locale.ENGLISH);
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
         dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
@@ -265,9 +266,9 @@ public class PDFInfoTest {
         // Content creator
         assertEquals("TextEdit", result.getPropertyValue("dc:source"));
 
-        // Check dates. This pdf has creation date == modif. date == 2014-10-22
-        // 20:00:00
-        String expected = dateFormatter.format(TestUtils.getCalendarNoMillis(2014, Calendar.OCTOBER, 22, 20, 0, 0).getTime());
+        // Check dates. This pdf has creation date == modif. date == 2014-10-23 00:00:00 UTC time
+        // The mapping above put these values in dc:expired and dc:issued
+        String expected = "2014-10-23T00:00:00";
         Calendar cal = (Calendar) result.getPropertyValue("dc:expired");
         cal.set(Calendar.MILLISECOND, 0);
         String calStr = dateFormatter.format(cal.getTime());
@@ -277,15 +278,5 @@ public class PDFInfoTest {
         cal.set(Calendar.MILLISECOND, 0);
         calStr = dateFormatter.format(cal.getTime());
         assertEquals(expected, calStr);
-        /*
-        GregorianCalendar expectedDate = new GregorianCalendar(2014, 9, 22, 20,
-                0, 0);
-        Calendar cal = (Calendar) result.getPropertyValue("dc:expired");// Creation
-                                                                        // date
-        assertEquals(expectedDate, cal);
-        cal = (Calendar) result.getPropertyValue("dc:issued");// Modification
-                                                              // date
-        assertEquals(expectedDate, cal);
-        */
     }
 }
