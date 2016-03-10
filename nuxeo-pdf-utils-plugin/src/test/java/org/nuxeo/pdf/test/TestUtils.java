@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -141,5 +142,25 @@ public class TestUtils {
         doc.setPropertyValue("file:content", new FileBlob(f));
         return inSession.createDocument(doc);
 
+    }
+    
+    /**
+     * Gets a calendar instance with 0 milliseconds.
+     *
+     * @param year the year
+     * @param month the month
+     * @param day the day
+     * @param hourOfDay the hour of day
+     * @param minute the minute
+     * @param second the second
+     * @return the calendar
+     */
+    public static Calendar getCalendarNoMillis(int year, int month, int day, int hourOfDay, int minute, int second) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, day, hourOfDay, minute, second);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return cal;
     }
 }

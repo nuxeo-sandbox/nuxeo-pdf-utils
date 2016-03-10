@@ -22,8 +22,13 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.StringReader;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,6 +77,8 @@ public class PDFInfoTest {
     public boolean kDO_LOCAL_TEST_EXPORT_DESKTOP = false;
 
     protected DocumentModel testDocsFolder, pdfDocModel;
+    
+    protected DateFormat dateFormatter;
 
     @Inject
     CoreSession coreSession;
@@ -104,6 +111,9 @@ public class PDFInfoTest {
         pdfDocModel = coreSession.createDocument(pdfDocModel);
         pdfDocModel = coreSession.saveDocument(pdfDocModel);
         assertNotNull(pdfDocModel);
+        
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'", Locale.ENGLISH);
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @After
@@ -257,6 +267,17 @@ public class PDFInfoTest {
 
         // Check dates. This pdf has creation date == modif. date == 2014-10-22
         // 20:00:00
+        String expected = dateFormatter.format(TestUtils.getCalendarNoMillis(2014, Calendar.OCTOBER, 22, 20, 0, 0).getTime());
+        Calendar cal = (Calendar) result.getPropertyValue("dc:expired");
+        cal.set(Calendar.MILLISECOND, 0);
+        String calStr = dateFormatter.format(cal.getTime());
+        assertEquals(expected, calStr);
+        
+        cal = (Calendar) result.getPropertyValue("dc:issued");
+        cal.set(Calendar.MILLISECOND, 0);
+        calStr = dateFormatter.format(cal.getTime());
+        assertEquals(expected, calStr);
+        /*
         GregorianCalendar expectedDate = new GregorianCalendar(2014, 9, 22, 20,
                 0, 0);
         Calendar cal = (Calendar) result.getPropertyValue("dc:expired");// Creation
@@ -265,6 +286,6 @@ public class PDFInfoTest {
         cal = (Calendar) result.getPropertyValue("dc:issued");// Modification
                                                               // date
         assertEquals(expectedDate, cal);
-
+        */
     }
 }
