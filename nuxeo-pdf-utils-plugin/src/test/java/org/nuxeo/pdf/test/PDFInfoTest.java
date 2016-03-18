@@ -22,8 +22,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.StringReader;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
