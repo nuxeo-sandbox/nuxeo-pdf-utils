@@ -19,10 +19,13 @@ package org.nuxeo.pdf;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -49,8 +52,7 @@ public class PDFUtils {
 
             if (inHex.length() >= 6) {
                 for (int i = 0; i < 3; i++) {
-                    result[i] = Integer.parseInt(
-                            inHex.substring(i * 2, i * 2 + 2), 16);
+                    result[i] = Integer.parseInt(inHex.substring(i * 2, i * 2 + 2), 16);
                 }
             }
         }
@@ -67,20 +69,39 @@ public class PDFUtils {
      * @return FileBlob
      * @throws IOException
      * @throws COSVisitorException
-     *
      */
-    public static FileBlob saveInTempFile(PDDocument inPdfDoc)
-            throws IOException, COSVisitorException {
+    public static FileBlob saveInTempFile(PDDocument inPdfDoc) throws IOException, COSVisitorException {
 
-        FileBlob result = null;
+        // FileBlob result = null;
 
-        File tempFile = File.createTempFile("nuxeo-pdfutils-", ".pdf");
-        inPdfDoc.save(tempFile);
-        result = new FileBlob(tempFile);
+        // File tempFile = File.createTempFile("nuxeo-pdfutils-", ".pdf");
+        // inPdfDoc.save(tempFile);
+        // result = new FileBlob(tempFile);
+        // result.setMimeType("application/pdf");
+        // Framework.trackFile(tempFile, result);
+
+        // return result;
+
+        return saveInTempFile(inPdfDoc, null);
+    }
+
+    public static FileBlob saveInTempFile(PDDocument inPdfDoc, String inFileName) throws IOException,
+            COSVisitorException {
+
+        Blob result = Blobs.createBlobWithExtension(".pdf");
+        File resultFile = result.getFile();
+        inPdfDoc.save(result.getFile());
+
         result.setMimeType("application/pdf");
-        Framework.trackFile(tempFile, result);
+        if (StringUtils.isNotBlank(inFileName)) {
+            result.setFilename(inFileName);
+        }
+        
+        FileBlob fb = new FileBlob(resultFile);
+        fb.setMimeType("application/pdf");
 
-        return result;
+        return fb;
+
     }
 
     /**
@@ -90,10 +111,8 @@ public class PDFUtils {
      * @param inTitle
      * @param inSubject
      * @param inAuthor
-     *
      */
-    public static void setInfos(PDDocument inPdfDoc, String inTitle,
-            String inSubject, String inAuthor) {
+    public static void setInfos(PDDocument inPdfDoc, String inTitle, String inSubject, String inAuthor) {
 
         if (inTitle != null && inTitle.isEmpty()) {
             inTitle = null;
@@ -141,8 +160,7 @@ public class PDFUtils {
         }
     }
 
-    public static class UnrestrictedGetBlobForDocumentIdOrPath extends
-            UnrestrictedSessionRunner {
+    public static class UnrestrictedGetBlobForDocumentIdOrPath extends UnrestrictedSessionRunner {
 
         protected String idOrPath;
 
@@ -152,8 +170,7 @@ public class PDFUtils {
 
         protected CoreSession session;
 
-        public UnrestrictedGetBlobForDocumentIdOrPath(
-                CoreSession inSession, String inIdOrPath) {
+        public UnrestrictedGetBlobForDocumentIdOrPath(CoreSession inSession, String inIdOrPath) {
             super(inSession);
 
             session = inSession;

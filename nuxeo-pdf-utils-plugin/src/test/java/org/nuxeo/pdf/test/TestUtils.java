@@ -44,6 +44,23 @@ public class TestUtils {
     public TestUtils() {
 
     }
+    
+    public PDDocument loadAndTrack(Blob inBlob) throws IOException {
+        
+        PDDocument pdfDoc = PDDocument.load(inBlob.getFile());
+        track(pdfDoc);
+        return pdfDoc;
+        
+    }
+    
+    public void closeAndUntrack(PDDocument inPdfDoc) {
+        try {
+            inPdfDoc.close();
+        } catch (Exception e) {
+            // Nothing
+        }
+        untrack(inPdfDoc);
+    }
 
     public void track(PDDocument inPdfDoc) {
         createdPDDocs.add(inPdfDoc);

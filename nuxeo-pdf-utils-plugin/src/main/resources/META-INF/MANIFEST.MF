@@ -1,20 +1,11 @@
 Manifest-Version: 1.0
-Bundle-Vendor: Nuxeo
-Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
+Bundle-SymbolicName: nuxeo-pdf-utils-plugin
 Bundle-Version: 1.0.qualifier
 Bundle-Name: nuxeo-pdf-utils-plugin
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
 Bundle-ManifestVersion: 2
-Nuxeo-Component: OSGI-INF/extensions/org.nuxeo.pdf.operations.PDFInfoT
- oFieldsOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.MergePDFsW
- ithBlobsInputOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.AddP
- ageNumbersOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.MergePD
- FsWithDocsInputOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.Ex
- tractPDFPagesOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.Wate
- rmarkWithTextOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.Wate
- rmarkWithImageOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.Wat
- ermarkWithPDFOp.xml,OSGI-INF/extensions/org.nuxeo.pdf.operations.Extr
- actTextFromPDFOp.xml
-Bundle-SymbolicName: nuxeo-pdf-utils-plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Nuxeo
+Nuxeo-Component: OSGI-INF/pdf-utils-operations.xml
 
