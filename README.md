@@ -152,6 +152,56 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * If the overlay has one single page, this page is overlayed on the 10 pages
     * If the overlay has 3 pages, then the overly will be made with pages 1 2 3 1 2 3 1 2 3 1
 
+* **`PDF: Encrypt Read Only`** (id `PDF.EncryptReadOnly`)
+  * Accepts Blob, Blobs, Document, Document(s)
+  * Encrypts the PDF in readonly mode: User can print, copy, print degraded, extract info for accessibility, but cannot assemble, modify, modify annotations.
+  * Returns a _new_ blob, copy of the original one, but encrypted
+  * Parameters:
+    * `originalOwnerPwd`: If the pdf is already encrypted, the password to open and modify i
+    * `owenrPwd`; The new passowrd to use for encryption. An owner can do everything on the pdf. If not passed, we use `originalOwnerPwd`
+    * `userPwd`: The password for users, who will have restriction (read only) on the pdf
+    * `keyLength`: The lenght to use for the encryptionkey. Possible values are 40 and 128. If no value is passed, 128 is used
+    * `xpath`: If the input is `Document`  or `Documents`, the field where to get the blob from (`file:content` by default)
+
+* **`PDF: Encrypt`** (id `PDF.Encrypt`)
+  * Accepts Blob, Blobs, Document, Document(s)
+  * Encrypts the PDF with the permissions given in `permissions`
+  * Returns a _new_ blob, copy of the original one, but encrypted
+  * Parameters:
+    * `originalOwnerPwd`: If the pdf is already encrypted, the password to open and modify it
+    * `owenrPwd`; The new passowrd to use for encryption. An owner can do everything on the pdf. If not passed, we use `originalOwnerPwd`
+    * `userPwd`: The password for users, who will have restriction (read only) on the pdf
+    * `keyLength`: The lenght to use for the encryptionkey. Possible values are 40 and 128. If no value is passed, 128 is used
+    * `xpath`: If the input is `Document`  or `Documents`, the field where to get the blob from (`file:content` by default)
+    * `permissions` is a `key=value` set where `key` can be one of the following. When not used, `false` is applied (permission to do the action is denied):
+    * `print`
+    * `modify`
+    * `copy`
+    * `modifyAnnot`
+    * `fillForms`
+    * `extractForAccessibility`
+    * `assemble`
+    * `printDegraded`
+    
+    So for example, if you pass...
+    
+    ```
+    print=true
+    copy=true
+    ```
+    
+    ... the user will only be able to print and copy.
+
+* **`PDF: Remove Encryption`** (id `PDF.RemoveEncryption`)
+  * Accepts Blob, Blobs, Document, Document(s)
+  * Remove the encryption
+  * Returns a _new_ blob, copy of the original one, not encrypted at all.
+  f the pdf already was encrypted, the operaiton still returns a copy of it (not the orginal blob
+  * Parameters:
+    * `wnerPwd`: Password to use to decrypt and remove the permissions
+    * `xpath`: If the input is `Document`  or `Documents`, the field where to get the blob from (`file:content` by default)
+
+
 
 ## License
 (C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
