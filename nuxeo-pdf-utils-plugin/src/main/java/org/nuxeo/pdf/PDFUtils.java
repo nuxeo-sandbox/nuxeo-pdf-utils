@@ -19,11 +19,13 @@ package org.nuxeo.pdf;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -33,7 +35,6 @@ import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.runtime.api.Framework;
 
 /**
  * Grouping miscellaneous utilities in this class.
@@ -58,6 +59,33 @@ public class PDFUtils {
         }
 
         return result;
+    }
+
+    /**
+     * This is just a short cut. We often load() and openProtection()
+     * 
+     * @param inBlob
+     * @param inPwd
+     * @return
+     * @throws IOException
+     * @throws BadSecurityHandlerException
+     * @throws CryptographyException
+     * @since 8.1
+     */
+    public static PDDocument load(Blob inBlob, String inPwd) throws NuxeoException {
+
+        PDDocument pdfDoc = null;
+
+        try {
+            pdfDoc = PDDocument.load(inBlob.getStream());
+            if (pdfDoc.isEncrypted()) {
+                pdfDoc.openProtection(new StandardDecryptionMaterial(inPwd));
+            }
+        } catch (IOException | BadSecurityHandlerException | CryptographyException e) {
+            throw new NuxeoException("Faiuled to load the PDF", e);
+        }
+
+        return pdfDoc;
     }
 
     /**
@@ -96,7 +124,7 @@ public class PDFUtils {
         if (StringUtils.isNotBlank(inFileName)) {
             result.setFilename(inFileName);
         }
-        
+
         FileBlob fb = new FileBlob(resultFile);
         fb.setMimeType("application/pdf");
 

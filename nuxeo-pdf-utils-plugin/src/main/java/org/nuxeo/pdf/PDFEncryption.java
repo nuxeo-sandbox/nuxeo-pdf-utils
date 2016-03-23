@@ -18,21 +18,14 @@
  */
 package org.nuxeo.pdf;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.NuxeoException;
 
 /**
@@ -45,9 +38,6 @@ import org.nuxeo.ecm.core.api.NuxeoException;
  * set the misc; infos (original owner password so an encrypted pdf can be handled, encryption key length, ...)
  * 
  * @since 8.1
- */
-/**
- * @since TODO
  */
 public class PDFEncryption {
 
@@ -77,13 +67,10 @@ public class PDFEncryption {
         pdfBlob = inBlob;
     }
 
-    protected void loadPdf() throws IOException, BadSecurityHandlerException, CryptographyException {
+    protected void loadPdf() throws NuxeoException {
 
         if (pdfDoc == null) {
-            pdfDoc = PDDocument.load(pdfBlob.getStream());
-            if (pdfDoc.isEncrypted()) {
-                pdfDoc.openProtection(new StandardDecryptionMaterial(originalOwnerPwd));
-            }
+            pdfDoc = PDFUtils.load(pdfBlob, originalOwnerPwd);
         }
     }
 

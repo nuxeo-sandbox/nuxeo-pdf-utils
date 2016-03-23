@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -33,7 +32,7 @@ import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 /**
  *
  *
- * @since TODO
+ * @since 7.10
  */
 public class TestUtils {
 
