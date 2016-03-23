@@ -81,6 +81,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `save`: If true, the document is saved after its fields have been populated
     * `properties`
       * A `key=value` list (one key-value pair/line), where `key` is the xpath of the destination field and `value` is one of the following (case sensitive):
+      
     ```
     File name
     File size
@@ -103,7 +104,17 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     Media box height
     Crop box width
     Crop box height
+    Can Print
+    Can Modify
+    Can Extract
+    Can Modify Annotations
+    Can Fill Forms
+    Can Extract for Accessibility
+    Can Assemble
+    Can Print Degraded
     ```
+    The  permlissions field (starting with "Can ...") contain the string "true" or "false"
+    
       * For example, say you have an `InfoOfPDF` schema, prefix `iop`, with misc. fields. You could write:
     ```
     iop:pdf_version=PDF version

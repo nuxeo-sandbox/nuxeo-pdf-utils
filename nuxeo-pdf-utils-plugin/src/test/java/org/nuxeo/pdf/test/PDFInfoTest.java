@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +40,11 @@ import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.pdf.PDFEncryption;
 import org.nuxeo.pdf.PDFInfo;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -64,6 +68,13 @@ public class PDFInfoTest {
     protected static final String ENCRYPTED_PDF = "files/13-pages-no-page-numbers-encrypted-pwd-nuxeo.pdf";
 
     protected static final String ENCRYPTED_PDF_PWD = "nuxeo";
+
+    // This PDF is "Read Only" for "user"
+    protected static final String ENCRYPTED_PDF_OWNER_USER = "files/protected_pwds_owner_user.pdf";
+
+    protected static final String ENCRYPTED_PDF_PWD_OWNER = "owner";
+
+    protected static final String ENCRYPTED_PDF_PWD_USER = "user";
 
     protected static final String PDF_WITH_XMP = "files/XMP-Embedding.pdf";
 
@@ -225,6 +236,58 @@ public class PDFInfoTest {
     }
 
     @Test
+    public void testOwnerPermissions() throws Exception {
+
+        File f = FileUtils.getResourceFileFromContext(ENCRYPTED_PDF_OWNER_USER);
+        FileBlob fb = new FileBlob(f);
+
+        PDFInfo info = new PDFInfo(fb, ENCRYPTED_PDF_PWD_OWNER);
+        assertNotNull(info);
+
+        info.run();
+        HashMap<String, String> values = info.toHashMap();
+        assertNotNull(values);
+
+        assertEquals("true", values.get("Encrypted"));
+        
+        assertEquals("true", values.get("Can Print"));
+        assertEquals("true", values.get("Can Modify"));
+        assertEquals("true", values.get("Can Extract"));
+        assertEquals("true", values.get("Can Modify Annotations"));
+        assertEquals("true", values.get("Can Fill Forms"));
+        assertEquals("true", values.get("Can Extract for Accessibility"));
+        assertEquals("true", values.get("Can Assemble"));
+        assertEquals("true", values.get("Can Print Degraded"));
+
+    }
+
+    @Test
+    public void testUserPermissions() throws Exception {
+
+        File f = FileUtils.getResourceFileFromContext(ENCRYPTED_PDF_OWNER_USER);
+        FileBlob fb = new FileBlob(f);
+
+        PDFInfo info = new PDFInfo(fb, ENCRYPTED_PDF_PWD_USER);
+        assertNotNull(info);
+
+        info.run();
+        HashMap<String, String> values = info.toHashMap();
+        assertNotNull(values);
+
+        assertEquals("true", values.get("Encrypted"));
+        
+        assertEquals("true", values.get("Can Print"));
+        assertEquals("false", values.get("Can Modify"));
+        assertEquals("true", values.get("Can Extract"));
+        assertEquals("false", values.get("Can Modify Annotations"));
+        assertEquals("false", values.get("Can Fill Forms"));
+        assertEquals("true", values.get("Can Extract for Accessibility"));
+        assertEquals("false", values.get("Can Assemble"));
+        assertEquals("true", values.get("Can Print Degraded"));
+
+    }
+
+    @Test
     public void testInfoToField() throws Exception {
 
         PDFInfo info = new PDFInfo(pdfDocModel);
@@ -243,7 +306,7 @@ public class PDFInfoTest {
         mapping.put("dc:rights", "PDF producer");
         mapping.put("dc:source", "Content creator");
 
-        // We don't save the document, just check the fileds
+        // We don't save the document, just check the fields
         DocumentModel result = info.toFields(pdfDocModel, mapping, false, null);
 
         // PDF Version

@@ -34,6 +34,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.nuxeo.ecm.core.api.Blob;
@@ -102,6 +103,8 @@ public class PDFInfo {
     protected Calendar creationDate = null;
 
     protected Calendar modificationDate = null;
+    
+    protected AccessPermission permissions = null;
 
     protected boolean alreadyParsed = false;
 
@@ -225,11 +228,21 @@ public class PDFInfo {
                 author = checkNotNull(docInfo.getAuthor());
                 contentCreator = checkNotNull(docInfo.getCreator());
                 keywords = checkNotNull(docInfo.getKeywords());
-                creationDate = docInfo.getCreationDate();
-                modificationDate = docInfo.getModificationDate();
+                try {
+                    creationDate = docInfo.getCreationDate();
+                } catch(IOException e) {
+                    creationDate = null;
+                }
+                try {
+                    modificationDate = docInfo.getModificationDate();
+                } catch(IOException e) {
+                    modificationDate = null;
+                }
                 producer = checkNotNull(docInfo.getProducer());
                 subject = checkNotNull(docInfo.getSubject());
                 title = checkNotNull(docInfo.getTitle());
+                
+                permissions = pdfDoc.getCurrentAccessPermission();
 
                 // Getting dimension is a bit tricky
                 mediaBoxWidthInPoints = -1;
@@ -381,6 +394,17 @@ public class PDFInfo {
             cachedMap.put("Media box height", "" + mediaBoxHeightInPoints);
             cachedMap.put("Crop box width", "" + cropBoxWidthInPoints);
             cachedMap.put("Crop box height", "" + cropBoxHeightInPoints);
+            
+            if(permissions != null) {
+                cachedMap.put("Can Print", Boolean.toString(permissions.canPrint()));
+                cachedMap.put("Can Modify", Boolean.toString(permissions.canModify()));
+                cachedMap.put("Can Extract", Boolean.toString(permissions.canExtractContent()));
+                cachedMap.put("Can Modify Annotations", Boolean.toString(permissions.canModifyAnnotations()));
+                cachedMap.put("Can Fill Forms", Boolean.toString(permissions.canFillInForm()));
+                cachedMap.put("Can Extract for Accessibility", Boolean.toString(permissions.canExtractForAccessibility()));
+                cachedMap.put("Can Assemble", Boolean.toString(permissions.canAssembleDocument()));
+                cachedMap.put("Can Print Degraded", Boolean.toString(permissions.canPrintDegraded()));
+            }
         }
 
         return cachedMap;
@@ -511,6 +535,10 @@ public class PDFInfo {
 
     public Calendar getModificationDate() {
         return modificationDate;
+    }
+
+    public AccessPermission getPermissions() {
+        return permissions;
     }
 
 }
