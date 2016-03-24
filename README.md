@@ -113,7 +113,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     Can Assemble
     Can Print Degraded
     ```
-    The  permlissions field (starting with "Can ...") contain the string "true" or "false"
+    The  permission fields (starting with "Can ...") contain "true" or "false". Every field is "true" if the document is not encrypted or is opened with the _owner_ password.
     
       * For example, say you have an `InfoOfPDF` schema, prefix `iop`, with misc. fields. You could write:
     ```
@@ -212,6 +212,20 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `wnerPwd`: Password to use to decrypt and remove the permissions
     * `xpath`: If the input is `Document`  or `Documents`, the field where to get the blob from (`file:content` by default)
 
+* **`PDF: Get Links`** (id `PDF.GetLinks`)
+  * Accepts Blob
+  * Returns a JSON String containing an array of objects. Each object has the following fields:
+    * `page`: The page number where the link is
+    * `subType`: The subType of the field. This is PDFBox (underlying java tool used to handle the PDF) label. It can be one of the following: `Launch`,  `GoToR` or `URI`.
+    * `text`: The text of the link
+    * `link`: The link itself (depensin on `subType` of course)
+  * Parameters
+    * `type`: One of the following (case insensitive):
+      * `Launch`
+      * `Remote Go To`
+      * `URI`
+    * `getAll`: If `true`, the operaiton returns a list of all the links (of category Launch, Remote Go To or URI)
+    * Important: If `getAll` is `false`, `type` _must_ be filled (or an error will occur)
 
 
 ## License

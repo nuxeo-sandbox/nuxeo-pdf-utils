@@ -31,6 +31,7 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDFileSpecification;
 import org.apache.pdfbox.pdmodel.interactive.action.type.PDAction;
 import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionLaunch;
 import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionRemoteGoTo;
+import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.util.PDFTextStripperByArea;
@@ -63,6 +64,8 @@ public class PDFLinks {
     protected ArrayList<LinkInfo> remoteGoToLinks;
 
     protected ArrayList<LinkInfo> launchLinks;
+
+    protected ArrayList<LinkInfo> uriLinks;
 
     PDFTextStripperByArea stripper;
 
@@ -171,9 +174,31 @@ public class PDFLinks {
 
     }
 
+    /**
+     * Return all links of type "URI" ({@link uriLinks.SUB_TYPE})
+     * 
+     * @return
+     * @throws IOException
+     * @since 8.1
+     */
+    public ArrayList<LinkInfo> getURILinks() throws IOException {
+
+        if (uriLinks == null) {
+
+            loadAndPreflightPdf();
+            uriLinks = parseForLinks(PDActionURI.SUB_TYPE);
+        }
+
+        return uriLinks;
+
+    }
+
     @SuppressWarnings("unchecked")
     protected ArrayList<LinkInfo> parseForLinks(String inSubType) throws IOException {
 
+        PDActionRemoteGoTo goTo;
+        PDActionLaunch launch;
+        PDActionURI uri;
         PDFileSpecification fspec;
 
         ArrayList<LinkInfo> li = new ArrayList<LinkInfo>();
@@ -198,16 +223,22 @@ public class PDFLinks {
                         String urlValue = null;
                         switch (inSubType) {
                         case PDActionRemoteGoTo.SUB_TYPE:
-                            PDActionRemoteGoTo goTo = (PDActionRemoteGoTo) action;
+                            goTo = (PDActionRemoteGoTo) action;
                             fspec = goTo.getFile();
                             urlValue = fspec.getFile();
                             break;
 
                         case PDActionLaunch.SUB_TYPE:
-                            PDActionLaunch launch = (PDActionLaunch) action;
+                            launch = (PDActionLaunch) action;
                             fspec = launch.getFile();
                             urlValue = fspec.getFile();
                             break;
+
+                        case PDActionURI.SUB_TYPE:
+                            uri = (PDActionURI) action;
+                            urlValue = uri.getURI();
+                            break;
+                            
                         // . . . Others . . .
                         }
 

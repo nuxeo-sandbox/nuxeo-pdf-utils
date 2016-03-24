@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +30,9 @@ import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.pdf.LinkInfo;
 import org.nuxeo.pdf.PDFLinks;
-import org.nuxeo.pdf.PDFMerge;
 
 /**
  * Returns a JSON string of an array of objects with page, subType, text and link fields.
@@ -45,7 +41,7 @@ import org.nuxeo.pdf.PDFMerge;
  * 
  * @since 8.1
  */
-@Operation(id = PDFGetLinksOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Get Links", description = "Returns a JSON string of an array of objects with page, subType, text and link fields. If getLAl is true, returns all the lings (Remote Go To and Launch in current version)")
+@Operation(id = PDFGetLinksOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Get Links", description = "Returns a JSON string of an array of objects with page, subType, text and link fields. If getAll is true, returns all the lings (Remote Go To, Launch and URI in current version)")
 public class PDFGetLinksOp {
 
     public static final String ID = "PDF.GetLinks";
@@ -53,7 +49,7 @@ public class PDFGetLinksOp {
     @Context
     protected OperationContext ctx;
 
-    @Param(name = "type", required = false, widget = Constants.W_OPTION, values = { "Launch", "Remote Go To" })
+    @Param(name = "type", required = false, widget = Constants.W_OPTION, values = { "Launch", "Remote Go To", "URI" })
     protected String type;
 
     @Param(name = "getAll", required = false)
@@ -67,6 +63,7 @@ public class PDFGetLinksOp {
         if (getAll) {
             types.add("Launch");
             types.add("Remote Go To");
+            types.add("URI");
         } else {
             if (StringUtils.isBlank(type)) {
                 throw new IllegalArgumentException("type cannot be empty if getAll is false");
@@ -78,9 +75,9 @@ public class PDFGetLinksOp {
 
         JSONArray array = new JSONArray();
         for (String theType : types) {
-            
+
             ArrayList<LinkInfo> links = new ArrayList<LinkInfo>();
-            
+
             switch (theType.toLowerCase()) {
             case "remote go to":
                 links = pdfl.getRemoteGoToLinks();
@@ -88,6 +85,10 @@ public class PDFGetLinksOp {
 
             case "launch":
                 links = pdfl.getLaunchLinks();
+                break;
+
+            case "uri":
+                links = pdfl.getURILinks();
                 break;
             }
 
@@ -101,7 +102,7 @@ public class PDFGetLinksOp {
                 array.put(object);
             }
         }
-        
+
         pdfl.close();
 
         return array.toString();
