@@ -20,16 +20,6 @@ package org.nuxeo.pdf.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.StringReader;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -49,13 +39,10 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.pdf.PDFEncryption;
-import org.nuxeo.pdf.PDFInfo;
 import org.nuxeo.pdf.operations.PDFEncryptReadOnlyOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import com.google.inject.Inject;
 
