@@ -18,14 +18,12 @@ package org.nuxeo.pdf;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.util.PageExtractor;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -38,6 +36,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
  */
 public class PDFPageExtractor {
 
+    @SuppressWarnings("unused")
     private static Log log = LogFactory.getLog(PDFPageExtractor.class);
 
     protected Blob pdfBlob;
@@ -102,13 +101,7 @@ public class PDFPageExtractor {
         PDDocument extracted = null;
 
         try {
-            pdfDoc = PDDocument.load(pdfBlob.getStream());
-            if (pdfDoc.isEncrypted()) {
-                if (StringUtils.isBlank(password)) {
-                    throw new NuxeoException("No password provided and pdf is encrypted. Cannot extract pages.");
-                }
-                pdfDoc.openProtection(new StandardDecryptionMaterial(password));
-            }
+            pdfDoc = PDFUtils.load(pdfBlob, password);
 
             PageExtractor pe = new PageExtractor(pdfDoc, inStartPage, inEndPage);
             extracted = pe.extract();
@@ -137,16 +130,9 @@ public class PDFPageExtractor {
 
         } catch (IOException | COSVisitorException e) {
             throw new NuxeoException("Failed to extract the pages", e);
-        } catch(BadSecurityHandlerException | CryptographyException e) {
-            throw new NuxeoException("Failed to decrypt the pdf", e);
         } finally {
-            if (pdfDoc != null) {
-                try {
-                    pdfDoc.close();
-                } catch (IOException e) {
-                    log.error("Error closing the PDDocument", e);
-                }
-            }
+            PDFUtils.closeSilently(pdfDoc);
+            
             if (extracted != null) {
                 try {
                     extracted.close();

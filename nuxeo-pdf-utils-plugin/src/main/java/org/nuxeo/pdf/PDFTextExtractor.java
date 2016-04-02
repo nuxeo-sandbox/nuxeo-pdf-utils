@@ -75,31 +75,15 @@ public class PDFTextExtractor {
             PDDocument pdfDoc = null;
             
             try {
+                pdfDoc = PDFUtils.load(pdfBlob, password);
+
                 PDFTextStripper stripper = new PDFTextStripper();
-                
-                pdfDoc = PDDocument.load(pdfBlob.getStream());
-                if (pdfDoc.isEncrypted()) {
-                    if (StringUtils.isBlank(password)) {
-                        throw new NuxeoException("No password provided and pdf is encrypted. Cannot extract pages.");
-                    }
-                    pdfDoc.openProtection(new StandardDecryptionMaterial(password));
-                }
-                
                 extractedAllAsString = stripper.getText(pdfDoc);
 
             } catch (IOException e) {
                 throw new NuxeoException("Failed to handle the pdf", e);
-            } catch (BadSecurityHandlerException | CryptographyException e) {
-                throw new NuxeoException("Failed to decrypt the pdf", e);
             } finally {
-                if (pdfDoc != null) {
-                    try {
-                        pdfDoc.close();
-                    } catch (IOException e) {
-                        log.error("Error closing the PDDocument", e);
-                    }
-                }
-
+                PDFUtils.closeSilently(pdfDoc);
             }
         }
         return extractedAllAsString;

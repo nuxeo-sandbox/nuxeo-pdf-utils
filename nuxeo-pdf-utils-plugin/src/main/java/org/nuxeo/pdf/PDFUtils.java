@@ -81,9 +81,11 @@ public class PDFUtils {
             if (pdfDoc.isEncrypted()) {
                 pdfDoc.openProtection(new StandardDecryptionMaterial(inPwd));
             }
-        } catch (IOException | BadSecurityHandlerException | CryptographyException e) {
-            throw new NuxeoException("Faiuled to load the PDF", e);
-        }
+        } catch (IOException e) {
+            throw new NuxeoException("Failed to load the PDF", e);
+        } catch (BadSecurityHandlerException | CryptographyException e) {
+            throw new NuxeoException("Failed to decrypt the PDF", e);
+        } 
 
         return pdfDoc;
     }

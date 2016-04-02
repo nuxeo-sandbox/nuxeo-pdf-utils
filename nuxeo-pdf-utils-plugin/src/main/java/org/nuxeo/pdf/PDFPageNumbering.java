@@ -20,15 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.nuxeo.ecm.core.api.Blob;
@@ -38,7 +34,7 @@ import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.runtime.api.Framework;
 
 /**
- * Add page numbers to a PDF, with misc. paramegeres (font, size, color,
+ * Add page numbers to a PDF, with misc. parameters (font, size, color,
  * position)
  *
  * @since 5.9.6
@@ -117,13 +113,7 @@ public class PDFPageNumbering {
         int[] rgb = PDFUtils.hex255ToRGB(inHex255Color);
 
         try {
-            doc = PDDocument.load(blob.getStream());
-            if (doc.isEncrypted()) {
-                if (StringUtils.isBlank(password)) {
-                    throw new NuxeoException("No password provided and pdf is encrypted. Cannot extract pages.");
-                }
-                doc.openProtection(new StandardDecryptionMaterial(password));
-            }
+            doc = PDFUtils.load(blob, password);
             
             List<?> allPages;
             PDFont font;
@@ -212,14 +202,8 @@ public class PDFPageNumbering {
 
         } catch (IOException | COSVisitorException e) {
             throw new NuxeoException("Failed to handle the pdf", e);
-        } catch (BadSecurityHandlerException | CryptographyException e) {
-            throw new NuxeoException("Failed to decrypt the pdf", e);
         } finally {
-            try {
-                doc.close();
-            } catch (IOException e) {
-                // Ignore
-            }
+            PDFUtils.closeSilently(doc);
         }
 
         return result;
