@@ -20,15 +20,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.runtime.api.Framework;
 
@@ -47,6 +52,8 @@ public class PDFPageNumbering {
     };
 
     protected Blob blob;
+    
+    protected String password;
 
     public PDFPageNumbering(Blob inBlob) {
         blob = inBlob;
@@ -98,8 +105,7 @@ public class PDFPageNumbering {
      */
     public Blob addPageNumbers(int inStartAtPage, int inStartAtNumber,
             String inFontName, float inFontSize, String inHex255Color,
-            PAGE_NUMBER_POSITION inPosition) throws IOException,
-            COSVisitorException {
+            PAGE_NUMBER_POSITION inPosition) throws NuxeoException {
 
         Blob result = null;
         PDDocument doc = null;
@@ -112,6 +118,13 @@ public class PDFPageNumbering {
 
         try {
             doc = PDDocument.load(blob.getStream());
+            if (doc.isEncrypted()) {
+                if (StringUtils.isBlank(password)) {
+                    throw new NuxeoException("No password provided and pdf is encrypted. Cannot extract pages.");
+                }
+                doc.openProtection(new StandardDecryptionMaterial(password));
+            }
+            
             List<?> allPages;
             PDFont font;
             int max;
@@ -197,12 +210,22 @@ public class PDFPageNumbering {
             result = new FileBlob(tempFile);
             Framework.trackFile(tempFile, result);
 
+        } catch (IOException | COSVisitorException e) {
+            throw new NuxeoException("Failed to handle the pdf", e);
+        } catch (BadSecurityHandlerException | CryptographyException e) {
+            throw new NuxeoException("Failed to decrypt the pdf", e);
         } finally {
-            if (doc != null) {
+            try {
                 doc.close();
+            } catch (IOException e) {
+                // Ignore
             }
         }
 
         return result;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

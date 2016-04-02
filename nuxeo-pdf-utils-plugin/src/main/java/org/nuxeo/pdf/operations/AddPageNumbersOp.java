@@ -31,9 +31,11 @@ import org.nuxeo.pdf.PDFPageNumbering.PAGE_NUMBER_POSITION;
 
 /**
  * Add page numbers to the PDF.
+ * <p>
+ * If the pdf is encrypted, a password is required.
  *
  */
-@Operation(id = AddPageNumbersOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Add Page Numbers", description = "Add the page numbers to the pdf, using the misc. parameters.")
+@Operation(id = AddPageNumbersOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Add Page Numbers", description = "Add the page numbers to the pdf, using the misc. parameters. If the pdf is encrypted, a password is required")
 public class AddPageNumbersOp {
 
     public static final String ID = "PDF.AddPageNumbers";
@@ -57,6 +59,9 @@ public class AddPageNumbersOp {
 
     @Param(name = "hex255Color", required = false, values = { "0xffffff" })
     protected String hex255Color = "0xffffff";
+
+    @Param(name = "password", required = false)
+    protected String password = null;
 
     @OperationMethod(collector = BlobCollector.class)
     public Blob run(Blob inBlob) throws IOException, COSVisitorException {
@@ -89,6 +94,8 @@ public class AddPageNumbersOp {
         }
 
         PDFPageNumbering pn = new PDFPageNumbering(inBlob);
+        pn.setPassword(password);
+        
         Blob result = pn.addPageNumbers((int) startAtPage, (int) startAtNumber,
                 fontName, fontSize, hex255Color, pos);
         result.setFilename(inBlob.getFilename());

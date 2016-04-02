@@ -25,6 +25,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `hex255Color`
       * Expressed as either 0xrrggbb or #rrggbb (case insensitive)
       * Default value: 0xffffff
+    * `password`: If the pdf is encrypted, the password that will allow modification.
 
 * **`PDF: Extract Pages`** (id `PDF.ExtractPages`)
   * Accept either a blob or a document as input

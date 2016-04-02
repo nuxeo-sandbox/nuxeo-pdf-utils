@@ -18,9 +18,14 @@ package org.nuxeo.pdf;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -36,6 +41,8 @@ public class PDFTextExtractor {
     private static Log log = LogFactory.getLog(PDFTextExtractor.class);
 
     protected Blob pdfBlob;
+
+    protected String password;
 
     protected String extractedAllAsString = null;
 
@@ -62,18 +69,28 @@ public class PDFTextExtractor {
         pdfBlob = (Blob) inDoc.getPropertyValue(inXPath);
     }
 
-    public String getAllExtractedLines() throws IOException {
-
-        PDDocument pdfDoc = null;
-        PDFTextStripper stripper = new PDFTextStripper();
+    public String getAllExtractedLines() throws NuxeoException {
 
         if (extractedAllAsString == null) {
+            PDDocument pdfDoc = null;
+            
             try {
+                PDFTextStripper stripper = new PDFTextStripper();
+                
                 pdfDoc = PDDocument.load(pdfBlob.getStream());
+                if (pdfDoc.isEncrypted()) {
+                    if (StringUtils.isBlank(password)) {
+                        throw new NuxeoException("No password provided and pdf is encrypted. Cannot extract pages.");
+                    }
+                    pdfDoc.openProtection(new StandardDecryptionMaterial(password));
+                }
+                
                 extractedAllAsString = stripper.getText(pdfDoc);
 
             } catch (IOException e) {
-                throw new NuxeoException(e);
+                throw new NuxeoException("Failed to handle the pdf", e);
+            } catch (BadSecurityHandlerException | CryptographyException e) {
+                throw new NuxeoException("Failed to decrypt the pdf", e);
             } finally {
                 if (pdfDoc != null) {
                     try {
@@ -107,6 +124,10 @@ public class PDFTextExtractor {
             extractedLine = extractedLine.substring(string.length(), extractedLine.length());
         }
         return extractedLine;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

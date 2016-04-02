@@ -18,6 +18,9 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.pdf.PDFTextExtractor;
 
 /**
+ * <p>
+ * If the pdf is encrypted, a password is required.
+ * 
  * @author fvadon
  */
 @Operation(id = ExtractTextFromPDFOp.ID, category = Constants.CAT_DOCUMENT, label = "ExtractTextFromPDF", description = "")
@@ -43,14 +46,19 @@ public class ExtractTextFromPDFOp {
     @Param(name = "removepatternfromresult", required = false)
     protected boolean removepatternfromresult = false;
 
+    @Param(name = "password", required = false)
+    protected String password = null;
+
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel input) throws IOException {
-        PDFTextExtractor PDFextractor = new PDFTextExtractor(input, pdfxpath);
+        PDFTextExtractor textExtractor = new PDFTextExtractor(input, pdfxpath);
+        textExtractor.setPassword(password);
+        
         String extractedText = null;
         if (removepatternfromresult) {
-            extractedText = PDFextractor.extractLastPartOfLine(patterntofind);
+            extractedText = textExtractor.extractLastPartOfLine(patterntofind);
         } else {
-            extractedText = PDFextractor.extractLineOf(patterntofind);
+            extractedText = textExtractor.extractLineOf(patterntofind);
         }
 
         if (extractedText != null) {
