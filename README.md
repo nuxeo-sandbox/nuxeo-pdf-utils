@@ -26,7 +26,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
       * Expressed as either 0xrrggbb or #rrggbb (case insensitive)
       * Default value: 0xffffff
 
-* **`PDF: Extract Pages`** (id `PDF.AddPageNumbers`)
+* **`PDF: Extract Pages`** (id `PDF.ExtractPages`)
   * Accept either a blob or a document as input
   * Returns a blob built with the extracted pages
   * If the input is a document, the `xpath` parameter must be used (default: `file:content`)
@@ -45,6 +45,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
       * If not used, subject is not set
     * `pdfAuthor`
       * If not used, author is not set
+    * `password`: If the pdf is encrypted, the password that will allow extraction.
 
 * **`PDF: Merge with Blob(s)`** (id `PDF.MergeWithBlobs`)
   * This operation merges all the blobs in a specific order (see below) and returns the final, merged PDF. Some properties (subject, ...) can also be set at the same time (optional)

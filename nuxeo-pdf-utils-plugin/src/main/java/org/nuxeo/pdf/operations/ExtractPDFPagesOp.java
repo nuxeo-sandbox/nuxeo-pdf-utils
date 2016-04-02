@@ -32,8 +32,10 @@ import org.nuxeo.pdf.PDFPageExtractor;
  * the input object. If a Blob is used as input, the
  * <code>xpath</xpath> parameter is not used. If <code>title</code>,
  * <code>subject</code> and <code>author</code> are optional")
+ * <p>
+ * If the pdf is encrypted, a password is required.
  */
-@Operation(id = ExtractPDFPagesOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Extract Pages", description = "Extract pages <code>startPage</code> to <code>endPage</code> (inclusive) from the input object. If a Blob is used as input, the <code>xpath</xpath> parameter is not used. If <code>title</code>, <code>subject</code> and <code>author</code> are optional")
+@Operation(id = ExtractPDFPagesOp.ID, category = Constants.CAT_CONVERSION, label = "PDF: Extract Pages", description = "Extract pages <code>startPage</code> to <code>endPage</code> (inclusive) from the input object. If a Blob is used as input, the <code>xpath</xpath> parameter is not used. If <code>title</code>, <code>subject</code> and <code>author</code> are optional. If the pdf is encrypted, a password is required.")
 public class ExtractPDFPagesOp {
 
     public static final String ID = "PDF.ExtractPages";
@@ -62,11 +64,15 @@ public class ExtractPDFPagesOp {
     @Param(name = "xpath", required = false, values = { "file:content" })
     protected String xpath = "";
 
+    @Param(name = "password", required = false)
+    protected String password = null;
+
     @OperationMethod
     public Blob run(Blob inBlob) {
 
         PDFPageExtractor pe = new PDFPageExtractor(inBlob);
-
+        pe.setPassword(password);
+        
         Blob result = pe.extract((int) startPage, (int) endPage, fileName,
                 pdfTitle, pdfSubject, pdfAuthor);
 
@@ -77,6 +83,7 @@ public class ExtractPDFPagesOp {
     public Blob run(DocumentModel inDoc) {
 
         PDFPageExtractor pe = new PDFPageExtractor(inDoc, xpath);
+        pe.setPassword(password);
 
         Blob result = pe.extract((int) startPage, (int) endPage, fileName,
                 pdfTitle, pdfSubject, pdfAuthor);

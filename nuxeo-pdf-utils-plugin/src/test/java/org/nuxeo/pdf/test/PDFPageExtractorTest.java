@@ -49,13 +49,17 @@ import com.google.inject.Inject;
 @Deploy({ "nuxeo-pdf-utils-plugin" })
 public class PDFPageExtractorTest {
 
-    private static final String THE_PDF = "files/13-pages-no-page-numbers.pdf";
+    protected static final String THE_PDF = "files/13-pages-no-page-numbers.pdf";
 
-    private static final String NOT_A_PDF = "files/Travel-3.jpg";
+    protected static final String ENCRYPTED_PDF = "files/13-pages-no-page-numbers-encrypted-pwd-nuxeo.pdf";
+
+    protected static final String NOT_A_PDF = "files/Travel-3.jpg";
 
     protected File pdfFile;
 
     protected FileBlob pdfFileBlob;
+    
+    protected FileBlob encryptedPdfFileBlob;
 
     TestUtils utils;
 
@@ -91,6 +95,9 @@ public class PDFPageExtractorTest {
         pdfFile = FileUtils.getResourceFileFromContext(THE_PDF);
         pdfFileBlob = new FileBlob(pdfFile);
         checkPDFBeforeTest();
+        
+        File f = FileUtils.getResourceFileFromContext(ENCRYPTED_PDF);
+        encryptedPdfFileBlob = new FileBlob(f);
     }
 
     @After
@@ -120,6 +127,23 @@ public class PDFPageExtractorTest {
         Blob extracted;
         String originalName = pdfFileBlob.getFilename().replace(".pdf", "");
         PDFPageExtractor pe = new PDFPageExtractor(pdfFileBlob);
+
+        extracted = pe.extract(1, 3);
+        assertTrue(extracted instanceof FileBlob);
+        checkExtractedPdf(extracted, 3,
+                "Creative Brief\nDo this\nLorem ipsum dolor sit amet");
+        assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
+        assertEquals("application/pdf", extracted.getMimeType());
+    }
+
+    @Test
+    public void testExtractPages_Basic_Encrypted() throws Exception {
+
+        Blob extracted;
+        String originalName = encryptedPdfFileBlob.getFilename().replace(".pdf", "");
+        PDFPageExtractor pe = new PDFPageExtractor(encryptedPdfFileBlob);
+        
+        pe.setPassword("nuxeo");
 
         extracted = pe.extract(1, 3);
         assertTrue(extracted instanceof FileBlob);
@@ -185,6 +209,28 @@ public class PDFPageExtractorTest {
         assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
         assertEquals("application/pdf", extracted.getMimeType());
     }
+
+    @Test
+    public void testExtractPagesOperation_BlobInput_Encrypted() throws Exception {
+
+        String originalName = encryptedPdfFileBlob.getFilename().replace(".pdf", "");
+
+        OperationChain chain;
+        OperationContext ctx = new OperationContext(coreSession);
+        assertNotNull(ctx);
+
+        ctx.setInput(encryptedPdfFileBlob);
+        chain = new OperationChain("testChain");
+
+        chain.add(ExtractPDFPagesOp.ID).set("startPage", 1).set("endPage", 3).set("password",  "nuxeo");
+        Blob extracted = (Blob) automationService.run(ctx, chain);
+        assertNotNull(extracted);
+        assertTrue(extracted instanceof FileBlob);
+        checkExtractedPdf(extracted, 3,
+                "Creative Brief\nDo this\nLorem ipsum dolor sit amet");
+        assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
+    }
+       
 
     @Test
     public void testExtractPagesOperationShouldFail_BlobInput()

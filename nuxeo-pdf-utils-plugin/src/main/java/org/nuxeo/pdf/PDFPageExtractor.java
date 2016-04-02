@@ -18,10 +18,14 @@ package org.nuxeo.pdf;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.util.PageExtractor;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -38,15 +42,16 @@ public class PDFPageExtractor {
 
     protected Blob pdfBlob;
 
+    protected String password;
+
     public PDFPageExtractor(Blob inBlob) {
 
         pdfBlob = inBlob;
     }
 
     /**
-     * Constructor with a <code>DocumentModel</code>. Default value for
-     * <code>inXPath</code> (if passed <code>null</code> or "", if
-     * <code>file:content</code>.
+     * Constructor with a <code>DocumentModel</code>. Default value for <code>inXPath</code> (if passed
+     * <code>null</code> or "", if <code>file:content</code>.
      *
      * @param inDoc
      * @param inXPath
@@ -64,23 +69,20 @@ public class PDFPageExtractor {
     }
 
     /**
-     * Return a Blob built from page <code>inStartPage</code> to
-     * <code>inEndPage</code> (inclusive).
+     * Return a Blob built from page <code>inStartPage</code> to <code>inEndPage</code> (inclusive).
      * <p>
-     * If <code>inEndPage</code> is greater than the number of pages in the
-     * source document, it will go to the end of the document. If
-     * <code>inStartPage</code> is less than 1, it'll start with page 1. If
-     * <code>inStartPage</code> is greater than <code>inEndPage</code> or
-     * greater than the number of pages in the source document, a blank document
+     * If <code>inEndPage</code> is greater than the number of pages in the source document, it will go to the end of
+     * the document. If <code>inStartPage</code> is less than 1, it'll start with page 1. If <code>inStartPage</code> is
+     * greater than <code>inEndPage</code> or greater than the number of pages in the source document, a blank document
      * will be returned.
      * <p>
-     * If fileName is null or "", if is set to the original name + the page
-     * range: mydoc.pdf and pages 10-75 +> mydoc-10-75.pdf
+     * If fileName is null or "", if is set to the original name + the page range: mydoc.pdf and pages 10-75 +>
+     * mydoc-10-75.pdf
      * <p>
      * The mimetype is always set to "application/pdf"
      * <p>
-     * Can set the title, subject and author of the resulting PDF.
-     * <b>Notice</b>: If the value is null or "", it is just ignored
+     * Can set the title, subject and author of the resulting PDF. <b>Notice</b>: If the value is null or "", it is just
+     * ignored
      *
      * @param inStartPage
      * @param inEndPage
@@ -89,10 +91,11 @@ public class PDFPageExtractor {
      * @param inSubject
      * @param inAuthor
      * @return FileBlob
-     *
+     * @throws CryptographyException
+     * @throws BadSecurityHandlerException
      */
-    public Blob extract(int inStartPage, int inEndPage, String inFileName,
-            String inTitle, String inSubject, String inAuthor) {
+    public Blob extract(int inStartPage, int inEndPage, String inFileName, String inTitle, String inSubject,
+            String inAuthor) throws NuxeoException {
 
         Blob result = null;
         PDDocument pdfDoc = null;
@@ -100,6 +103,12 @@ public class PDFPageExtractor {
 
         try {
             pdfDoc = PDDocument.load(pdfBlob.getStream());
+            if (pdfDoc.isEncrypted()) {
+                if (StringUtils.isBlank(password)) {
+                    throw new NuxeoException("No password provided and pdf is encrypted. Cannot extract pages.");
+                }
+                pdfDoc.openProtection(new StandardDecryptionMaterial(password));
+            }
 
             PageExtractor pe = new PageExtractor(pdfDoc, inStartPage, inEndPage);
             extracted = pe.extract();
@@ -121,14 +130,15 @@ public class PDFPageExtractor {
                     }
 
                 }
-                inFileName = originalName + "-" + inStartPage + "-" + inEndPage
-                        + ".pdf";
+                inFileName = originalName + "-" + inStartPage + "-" + inEndPage + ".pdf";
             }
             result.setFilename(inFileName);
             extracted.close();
 
         } catch (IOException | COSVisitorException e) {
-            throw new NuxeoException(e);
+            throw new NuxeoException("Failed to extract the pages", e);
+        } catch(BadSecurityHandlerException | CryptographyException e) {
+            throw new NuxeoException("Failed to decrypt the pdf", e);
         } finally {
             if (pdfDoc != null) {
                 try {
@@ -147,6 +157,10 @@ public class PDFPageExtractor {
         }
 
         return result;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }
