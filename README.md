@@ -1,8 +1,9 @@
 # nuxeo-pdf-utils
-===
+=================
+
 QA build status: [![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=Sandbox/sandbox_nuxeo-pdf-utils)](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/ws/nuxeo-pdf-utils-mp/target/)
 
-  _(a click on the status button brings you to the QA build where you can download the .zip package to install)_
+[QA Build Page](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/ws/nuxeo-pdf-utils-mp/target/) to get the Nuxeo Package
 
 A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application. The following operations are added:
 
