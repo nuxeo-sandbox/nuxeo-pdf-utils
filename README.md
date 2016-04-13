@@ -1,8 +1,9 @@
 # nuxeo-pdf-utils
 ===
 
-A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application. The following operations are added:
+[![Build Status](https://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/)](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/ws/nuxeo-pdf-utils-mp/target/)
 
+A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application. The following operations are added:
 
 ## Operations
 These operations can be used in Studio after importing their JSON definitions to the Automation registry.
