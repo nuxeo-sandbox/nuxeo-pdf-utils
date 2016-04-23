@@ -10,7 +10,7 @@
   <groupId>org.nuxeo.pdf.utils</groupId>
   <artifactId>nuxeo-pdf-utils-parent</artifactId>
   <name>Parent Project for Nuxeo PDF Utilities</name>
-  <version>8.1-SNAPSHOT</version>
+  <version>8.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description />
   <modules>
@@ -18,7 +18,7 @@
     <module>nuxeo-pdf-utils-mp</module>
   </modules>
   <properties>
-    <nuxeo.pdf.utils.version>8.1-SNAPSHOT</nuxeo.pdf.utils.version>
+    <nuxeo.pdf.utils.version>8.2-SNAPSHOT</nuxeo.pdf.utils.version>
   </properties>
   <dependencyManagement>
     <dependencies>
