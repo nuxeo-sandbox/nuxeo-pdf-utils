@@ -1,0 +1,7 @@
+{
+  "generator-nuxeo": {
+    "promptValues": {
+      "package": "org.nuxeo.pdf.operations"
+    }
+  }
+}
