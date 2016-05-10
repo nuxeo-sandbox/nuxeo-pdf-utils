@@ -2,7 +2,7 @@
 <component name="org.nuxeo.pdf.operations.operation.p-d-f-to-pictures" version="1.0">
 
   <extension point="operations" target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
-    <operation class="org.nuxeo.pdf.operations.PDFToPictures"/>
+    <operation class="org.nuxeo.pdf.operations.PDFToPicturesOp"/>
   </extension>
 
 </component>

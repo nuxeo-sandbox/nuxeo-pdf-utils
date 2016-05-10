@@ -16,18 +16,27 @@
  */
 package org.nuxeo.pdf;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+import org.apache.pdfbox.util.ImageIOUtil;
 import org.apache.pdfbox.util.PageExtractor;
+import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
+import org.nuxeo.runtime.api.Framework;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Extract pages from a PDF
@@ -94,7 +103,7 @@ public class PDFPageExtractor {
      * @throws BadSecurityHandlerException
      */
     public Blob extract(int inStartPage, int inEndPage, String inFileName, String inTitle, String inSubject,
-            String inAuthor) throws NuxeoException {
+                        String inAuthor) throws NuxeoException {
 
         Blob result = null;
         PDDocument pdfDoc = null;
@@ -132,7 +141,7 @@ public class PDFPageExtractor {
             throw new NuxeoException("Failed to extract the pages", e);
         } finally {
             PDFUtils.closeSilently(pdfDoc);
-            
+
             if (extracted != null) {
                 try {
                     extracted.close();
@@ -143,6 +152,56 @@ public class PDFPageExtractor {
         }
 
         return result;
+    }
+
+    public BlobList getPagesAsImages(int inStartPage, int inEndPage, String inFileName, String inTitle, String inSubject,
+                                     String inAuthor) throws NuxeoException {
+
+        /**
+         * Get all PDF pages.
+         * Convert each page to PNG.
+         * Convert each PNG to Nuxeo Blob.
+         * Add to BlobList.
+         */
+
+        BlobList results = null;
+        PDDocument pdfDoc = null;
+        PDDocument extracted = null;
+
+        try {
+            pdfDoc = PDFUtils.load(pdfBlob, password);
+            List<PDPage> pages = pdfDoc.getDocumentCatalog().getAllPages();
+
+            int page = 0;
+            for (PDPage pdPage : pages) {
+                ++page;
+
+                BufferedImage bim = pdPage.convertToImage(BufferedImage.TYPE_INT_RGB, 300);
+                String filename = inFileName + "-" + page + ".png";
+                File resultFile = Framework.createTempFile("pdf-to-picture-page", ".png");
+                FileOutputStream resultFileStream = new FileOutputStream(resultFile);
+                ImageIOUtil.writeImage(bim, "png", resultFileStream, 300);
+                FileBlob result = new FileBlob(resultFile);
+                result.setMimeType("picture/png");
+                results.add(result);
+            }
+            pdfDoc.close();
+
+        } catch (IOException e) {
+            throw new NuxeoException("Failed to extract the pages", e);
+        } finally {
+            PDFUtils.closeSilently(pdfDoc);
+
+            if (extracted != null) {
+                try {
+                    extracted.close();
+                } catch (IOException e) {
+                    // Nothing
+                }
+            }
+        }
+
+        return results;
     }
 
     public void setPassword(String password) {

@@ -37,7 +37,7 @@ public class TestPDFToPictures {
     @Test
     public void shouldCallTheOperation() throws OperationException {
         OperationContext ctx = new OperationContext(session);
-        DocumentModel doc = (DocumentModel) automationService.run(ctx, PDFToPictures.ID);
+        DocumentModel doc = (DocumentModel) automationService.run(ctx, PDFToPicturesOp.ID);
         assertEquals("/", doc.getPathAsString());
     }
 
@@ -47,7 +47,7 @@ public class TestPDFToPictures {
         OperationContext ctx = new OperationContext(session);
         Map<String, Object> params = new HashMap<>();
         params.put("path", path);
-        DocumentModel doc = (DocumentModel) automationService.run(ctx, PDFToPictures.ID, params);
+        DocumentModel doc = (DocumentModel) automationService.run(ctx, PDFToPicturesOp.ID, params);
         assertEquals(path, doc.getPathAsString());
     }
 }
