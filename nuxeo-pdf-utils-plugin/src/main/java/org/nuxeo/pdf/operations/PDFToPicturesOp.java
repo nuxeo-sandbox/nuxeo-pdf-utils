@@ -21,12 +21,6 @@ public class PDFToPicturesOp {
     @Context
     protected CoreSession session;
 
-    @Param(name = "startPage", required = false)
-    protected long startPage;
-
-    @Param(name = "endPage", required = false)
-    protected long endPage;
-
     @Param(name = "fileName", required = false)
     protected String fileName = "";
 
@@ -45,8 +39,7 @@ public class PDFToPicturesOp {
         PDFPageExtractor pe = new PDFPageExtractor(inDoc, xpath);
         pe.setPassword(password);
 
-        BlobList result = pe.getPagesAsImages((int) startPage, (int) endPage, fileName,
-                pdfTitle, pdfSubject, pdfAuthor);
+        BlobList result = pe.getPagesAsImages( fileName );
 
         return result;
     }

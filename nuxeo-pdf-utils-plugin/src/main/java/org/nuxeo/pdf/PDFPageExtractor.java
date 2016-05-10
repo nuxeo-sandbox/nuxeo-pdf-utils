@@ -154,8 +154,7 @@ public class PDFPageExtractor {
         return result;
     }
 
-    public BlobList getPagesAsImages(int inStartPage, int inEndPage, String inFileName, String inTitle, String inSubject,
-                                     String inAuthor) throws NuxeoException {
+    public BlobList getPagesAsImages(String inFileName) throws NuxeoException {
 
         /**
          * Get all PDF pages.
