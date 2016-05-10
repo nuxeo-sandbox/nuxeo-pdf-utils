@@ -8,9 +8,9 @@
     <!-- Include your artifacts in the graph adding your groupId to groupPrefixes -->
     <artifact:nuxeo-expand includeTestScope="false"
                            groupPrefixes="org.nuxeo.pdf.utils"/>
-    <!-- For Nuxeo IDE being able to use that distribution as a SDK -->
+    <!-- For Nuxeo IDE being able to use that distribution as a SDK
     <artifact:print output="${outdir}/artifacts-sample.properties" mode="sdk"/>
-    <artifact:print output="${outdir}/test-artifacts-sample.properties" mode="sdk" scopes="test"/>
+    <artifact:print output="${outdir}/test-artifacts-sample.properties" mode="sdk" scopes="test"/>-->
     <!-- Prints the graph for debugging purpose -->
     <artifact:print output="${outdir}/dependency-tree.log"/>
     <tstamp/>
@@ -28,8 +28,8 @@
         <filter token="DISTRIB_VERSION" value="${nuxeo.distribution.version}"/>
       </filterset>
     </copy>
-    <copy file="${outdir}/artifacts-sample.properties" todir="${outdir}/marketplace/install"/>
-    <copy file="${outdir}/test-artifacts-sample.properties" todir="${outdir}/marketplace/install"/>
+   <!--<copy file="${outdir}/artifacts-sample.properties" todir="${outdir}/marketplace/install"/>
+    <copy file="${outdir}/test-artifacts-sample.properties" todir="${outdir}/marketplace/install"/>-->
 
     <!-- Base distribution NXR -->
     <copy todir="${outdir}">
@@ -107,12 +107,12 @@
       </then>
     </if>
 
-    <var name="install.properties"
+    <!--<var name="install.properties"
          value="${line.separator}
   &lt;copy file=&quot;${package.root}/install/artifacts-sample.properties&quot;${line.separator}
     todir=&quot;${env.server.home}/sdk&quot; overwrite=&quot;true&quot; /&gt;${line.separator}
   &lt;copy file=&quot;${package.root}/install/test-artifacts-sample.properties&quot;${line.separator}
-    todir=&quot;${env.server.home}/sdk&quot; overwrite=&quot;true&quot; /&gt;"/>
+    todir=&quot;${env.server.home}/sdk&quot; overwrite=&quot;true&quot; /&gt;"/>-->
 
     <var name="install.templates" value=""/>
     <if>
