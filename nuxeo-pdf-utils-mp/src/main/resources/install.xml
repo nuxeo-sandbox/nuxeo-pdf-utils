@@ -1,3 +1,4 @@
 <install>
   <update dir="${package.root}/install/bundles" todir="${env.bundles}" />
+  <update dir="${package.root}/install/lib" todir="${env.lib}" />
 </install>
