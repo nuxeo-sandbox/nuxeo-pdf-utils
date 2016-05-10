@@ -189,11 +189,13 @@ public class PDFPageExtractor {
             for (PDPage pdPage : pages) {
                 ++page;
 
+                resultFileName = inFileName + "-" + page;
+
                 BufferedImage bim = pdPage.convertToImage(BufferedImage.TYPE_INT_RGB, 300);
-                String resultFileName = inFileName + "-" + page;
                 File resultFile = Framework.createTempFile(resultFileName, ".png");
                 FileOutputStream resultFileStream = new FileOutputStream(resultFile);
                 ImageIOUtil.writeImage(bim, "png", resultFileStream, 300);
+
                 FileBlob result = new FileBlob(resultFile);
                 result.setFilename(resultFileName + ".png");
                 result.setMimeType("picture/png");
