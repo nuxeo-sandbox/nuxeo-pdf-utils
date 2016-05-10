@@ -31,7 +31,7 @@
       <artifactId>nuxeo-pdf-utils-plugin</artifactId>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
