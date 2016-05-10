@@ -32,9 +32,6 @@ public class PDFToPicturesOp {
 
     @OperationMethod
     public BlobList run(DocumentModel inDoc) {
-        String pdfTitle = null;
-        String pdfSubject = null;
-        String pdfAuthor = null;
 
         PDFPageExtractor pe = new PDFPageExtractor(inDoc, xpath);
         pe.setPassword(password);
