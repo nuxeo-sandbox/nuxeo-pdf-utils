@@ -165,7 +165,6 @@ public class PDFPageExtractor {
 
         BlobList results = null;
         PDDocument pdfDoc = null;
-        PDDocument extracted = null;
 
         try {
             pdfDoc = PDFUtils.load(pdfBlob, password);
@@ -190,14 +189,6 @@ public class PDFPageExtractor {
             throw new NuxeoException("Failed to extract the pages", e);
         } finally {
             PDFUtils.closeSilently(pdfDoc);
-
-            if (extracted != null) {
-                try {
-                    extracted.close();
-                } catch (IOException e) {
-                    // Nothing
-                }
-            }
         }
 
         return results;
