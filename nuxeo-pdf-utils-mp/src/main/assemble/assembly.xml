@@ -103,7 +103,6 @@
     </if>
 
 
-
     <copy file="src/main/resources/install.xml" todir="${outdir}/marketplace" overwrite="true">
       <filterset>
         <filter token="BUNDLES" value="${install.bundles}"/>
