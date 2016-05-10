@@ -163,7 +163,7 @@ public class PDFPageExtractor {
          * Add to BlobList.
          */
 
-        BlobList results = null;
+        BlobList results = new BlobList();
         PDDocument pdfDoc = null;
         String resultFileName = null;
 
