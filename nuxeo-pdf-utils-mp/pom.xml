@@ -9,7 +9,7 @@
 
   <artifactId>nuxeo-pdf-utils-mp</artifactId>
   <packaging>zip</packaging>
-  <name>Market Place Package for Nuxeo PDF Utils</name>
+  <name>Nuxeo Package for Nuxeo PDF Utils</name>
 
   <dependencies>
     <!-- Base distribution(s) for the MP -->
