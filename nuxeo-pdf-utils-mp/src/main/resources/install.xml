@@ -1,4 +1,5 @@
+<!-- See documentation at http://doc.nuxeo.com/x/IgIz -->
 <install>
-  <update dir="${package.root}/install/bundles" todir="${env.bundles}" />
-  <update dir="${package.root}/install/lib" todir="${env.lib}" />
+  @BUNDLES@
+  @LIBS@
 </install>
