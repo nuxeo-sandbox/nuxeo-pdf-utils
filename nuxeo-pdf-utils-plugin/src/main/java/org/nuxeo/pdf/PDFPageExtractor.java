@@ -195,6 +195,7 @@ public class PDFPageExtractor {
                 FileOutputStream resultFileStream = new FileOutputStream(resultFile);
                 ImageIOUtil.writeImage(bim, "png", resultFileStream, 300);
                 FileBlob result = new FileBlob(resultFile);
+                result.setFilename(resultFileName + ".png");
                 result.setMimeType("picture/png");
                 results.add(result);
             }
