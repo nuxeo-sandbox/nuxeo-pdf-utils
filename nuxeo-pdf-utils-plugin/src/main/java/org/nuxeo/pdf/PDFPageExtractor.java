@@ -165,6 +165,21 @@ public class PDFPageExtractor {
 
         BlobList results = null;
         PDDocument pdfDoc = null;
+        String resultFileName = null;
+
+        if (inFileName == null || inFileName.isEmpty()) {
+            String originalName = pdfBlob.getFilename();
+            if (originalName == null || originalName.isEmpty()) {
+                originalName = "extracted";
+            } else {
+                int pos = originalName.toLowerCase().lastIndexOf(".pdf");
+                if (pos > 0) {
+                    originalName = originalName.substring(0, pos);
+                }
+
+            }
+            inFileName = originalName + ".pdf";
+        }
 
         try {
             pdfDoc = PDFUtils.load(pdfBlob, password);
@@ -175,8 +190,8 @@ public class PDFPageExtractor {
                 ++page;
 
                 BufferedImage bim = pdPage.convertToImage(BufferedImage.TYPE_INT_RGB, 300);
-                String filename = inFileName + "-" + page + ".png";
-                File resultFile = Framework.createTempFile("pdf-to-picture-page", ".png");
+                String resultFileName = inFileName + "-" + page;
+                File resultFile = Framework.createTempFile(resultFileName, ".png");
                 FileOutputStream resultFileStream = new FileOutputStream(resultFile);
                 ImageIOUtil.writeImage(bim, "png", resultFileStream, 300);
                 FileBlob result = new FileBlob(resultFile);
