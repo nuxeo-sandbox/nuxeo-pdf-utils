@@ -17,11 +17,7 @@
 
 package org.nuxeo.pdf.test;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-
+import com.google.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.junit.After;
@@ -35,15 +31,18 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.pdf.PDFPageExtractor;
 import org.nuxeo.pdf.operations.ExtractPDFPagesOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
-import com.google.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @Features({AutomationFeature.class})
@@ -260,9 +259,9 @@ public class PDFPageExtractorTest {
     @Test
     public void testPagesToPictures_BlobInput() throws Exception {
 
-        File pefWithJBIGImage = FileUtils.getResourceFileFromContext("files/Transcript_California.pdf");
+        File pdfWithJBIGImage = FileUtils.getResourceFileFromContext("files/Transcript_California.pdf");
 
-        FileBlob testFile = new FileBlob(pefWithJBIGImage);
+        FileBlob testFile = new FileBlob(pdfWithJBIGImage);
 
         PDFPageExtractor pe = new PDFPageExtractor(testFile);
 

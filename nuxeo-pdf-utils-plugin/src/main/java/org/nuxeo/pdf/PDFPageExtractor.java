@@ -32,6 +32,7 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.runtime.api.Framework;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -155,6 +156,9 @@ public class PDFPageExtractor {
     }
 
     public BlobList getPagesAsImages(String inFileName) throws NuxeoException {
+
+        // See https://github.com/levigo/jbig2-imageio#what-if-the-plugin-is-on-classpath-but-not-seen
+        ImageIO.scanForPlugins();
 
         /**
          * Get all PDF pages.
