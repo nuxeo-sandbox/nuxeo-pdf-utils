@@ -25,6 +25,6 @@
     <package>nuxeo-adullact-service:@VERSION@</package>
   </dependencies>
  -->
-  <license>LGPL</license>
-  <license-url>http://www.gnu.org/licenses/lgpl.html</license-url>
+  <license>Apache License, Version 2.0</license>
+  <license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
 </package>

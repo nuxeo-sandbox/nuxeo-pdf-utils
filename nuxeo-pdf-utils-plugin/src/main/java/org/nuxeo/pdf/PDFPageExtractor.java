@@ -16,18 +16,28 @@
  */
 package org.nuxeo.pdf;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
+import org.apache.pdfbox.util.ImageIOUtil;
 import org.apache.pdfbox.util.PageExtractor;
+import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
+import org.nuxeo.runtime.api.Framework;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Extract pages from a PDF
@@ -94,7 +104,7 @@ public class PDFPageExtractor {
      * @throws BadSecurityHandlerException
      */
     public Blob extract(int inStartPage, int inEndPage, String inFileName, String inTitle, String inSubject,
-            String inAuthor) throws NuxeoException {
+                        String inAuthor) throws NuxeoException {
 
         Blob result = null;
         PDDocument pdfDoc = null;
@@ -132,7 +142,7 @@ public class PDFPageExtractor {
             throw new NuxeoException("Failed to extract the pages", e);
         } finally {
             PDFUtils.closeSilently(pdfDoc);
-            
+
             if (extracted != null) {
                 try {
                     extracted.close();
@@ -143,6 +153,69 @@ public class PDFPageExtractor {
         }
 
         return result;
+    }
+
+    public BlobList getPagesAsImages(String inFileName) throws NuxeoException {
+        // See https://github.com/levigo/jbig2-imageio#what-if-the-plugin-is-on-classpath-but-not-seen
+        ImageIO.scanForPlugins();
+
+        BlobList results = new BlobList();
+        PDDocument pdfDoc = null;
+        String resultFileName = null;
+
+        // Use file name parameter if passed, otherwise use original file name.
+        if (inFileName == null || inFileName.isEmpty()) {
+            String originalName = pdfBlob.getFilename();
+            if (originalName == null || originalName.isEmpty()) {
+                originalName = "extracted";
+            } else {
+                int pos = originalName.toLowerCase().lastIndexOf(".pdf");
+                if (pos > 0) {
+                    originalName = originalName.substring(0, pos);
+                }
+
+            }
+            inFileName = originalName + ".pdf";
+        }
+
+        try {
+            pdfDoc = PDFUtils.load(pdfBlob, password);
+
+            // Get all PDF pages.
+            List<PDPage> pages = pdfDoc.getDocumentCatalog().getAllPages();
+
+            int page = 0;
+
+            // Convert each page to PNG.
+            for (PDPage pdPage : pages) {
+                ++page;
+
+                resultFileName = inFileName + "-" + page;
+
+                BufferedImage bim = pdPage.convertToImage(BufferedImage.TYPE_INT_RGB, 300);
+                File resultFile = Framework.createTempFile(resultFileName, ".png");
+                FileOutputStream resultFileStream = new FileOutputStream(resultFile);
+                ImageIOUtil.writeImage(bim, "png", resultFileStream, 300);
+
+                // Convert each PNG to Nuxeo Blob.
+                FileBlob result = new FileBlob(resultFile);
+                result.setFilename(resultFileName + ".png");
+                result.setMimeType("picture/png");
+
+                // Add to BlobList.
+                results.add(result);
+
+                Framework.trackFile(resultFile, result);
+            }
+            pdfDoc.close();
+
+        } catch (IOException e) {
+            throw new NuxeoException("Failed to extract the pages", e);
+        } finally {
+            PDFUtils.closeSilently(pdfDoc);
+        }
+
+        return results;
     }
 
     public void setPassword(String password) {
