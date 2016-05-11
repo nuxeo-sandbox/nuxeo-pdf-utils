@@ -53,6 +53,8 @@ public class PDFPageExtractorTest {
 
     protected static final String ENCRYPTED_PDF = "files/13-pages-no-page-numbers-encrypted-pwd-nuxeo.pdf";
 
+    protected static final String JBIG2_PDF = "files/Transcript_California.pdf";
+
     protected static final String NOT_A_PDF = "files/Travel-3.jpg";
 
     protected File pdfFile;
@@ -257,15 +259,17 @@ public class PDFPageExtractorTest {
     }
 
     @Test
-    public void testPagesToPictures_BlobInput() throws Exception {
+    public void testPagesToPictures_Basic() throws Exception {
 
-        File pdfWithJBIGImage = FileUtils.getResourceFileFromContext("files/Transcript_California.pdf");
+        File pdfWithJBIGImages = FileUtils.getResourceFileFromContext(JBIG2_PDF);
 
-        FileBlob testFile = new FileBlob(pdfWithJBIGImage);
+        FileBlob testFile = new FileBlob(pdfWithJBIGImages);
 
         PDFPageExtractor pe = new PDFPageExtractor(testFile);
 
-        BlobList result = pe.getPagesAsImages("test");
+        BlobList results = pe.getPagesAsImages(null);
+
+        assertEquals(results.size(), 2);
     }
 
 }
