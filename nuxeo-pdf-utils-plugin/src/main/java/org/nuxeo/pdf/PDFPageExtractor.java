@@ -156,21 +156,14 @@ public class PDFPageExtractor {
     }
 
     public BlobList getPagesAsImages(String inFileName) throws NuxeoException {
-
         // See https://github.com/levigo/jbig2-imageio#what-if-the-plugin-is-on-classpath-but-not-seen
         ImageIO.scanForPlugins();
-
-        /**
-         * Get all PDF pages.
-         * Convert each page to PNG.
-         * Convert each PNG to Nuxeo Blob.
-         * Add to BlobList.
-         */
 
         BlobList results = new BlobList();
         PDDocument pdfDoc = null;
         String resultFileName = null;
 
+        // Use file name parameter if passed, otherwise use original file name.
         if (inFileName == null || inFileName.isEmpty()) {
             String originalName = pdfBlob.getFilename();
             if (originalName == null || originalName.isEmpty()) {
@@ -187,9 +180,13 @@ public class PDFPageExtractor {
 
         try {
             pdfDoc = PDFUtils.load(pdfBlob, password);
+
+            // Get all PDF pages.
             List<PDPage> pages = pdfDoc.getDocumentCatalog().getAllPages();
 
             int page = 0;
+
+            // Convert each page to PNG.
             for (PDPage pdPage : pages) {
                 ++page;
 
@@ -200,10 +197,15 @@ public class PDFPageExtractor {
                 FileOutputStream resultFileStream = new FileOutputStream(resultFile);
                 ImageIOUtil.writeImage(bim, "png", resultFileStream, 300);
 
+                // Convert each PNG to Nuxeo Blob.
                 FileBlob result = new FileBlob(resultFile);
                 result.setFilename(resultFileName + ".png");
                 result.setMimeType("picture/png");
+
+                // Add to BlobList.
                 results.add(result);
+
+                Framework.trackFile(resultFile, result);
             }
             pdfDoc.close();
 
