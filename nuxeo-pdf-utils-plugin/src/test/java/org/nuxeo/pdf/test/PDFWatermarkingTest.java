@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -88,6 +90,8 @@ public class PDFWatermarkingTest {
 
     protected DocumentModel testDocsFolder, pdfForWatermarkDoc,
             pngForWatermarkDoc;
+    
+    protected boolean imageIOGeIoUseCache;
 
     @Inject
     CoreSession coreSession;
@@ -115,6 +119,10 @@ public class PDFWatermarkingTest {
 
     @Before
     public void setup() throws IOException {
+        
+        // javax.imageio.IIOException: Can't create cache file!
+        imageIOGeIoUseCache = ImageIO.getUseCache();
+        ImageIO.setUseCache(false);
 
         utils = new TestUtils();
 
@@ -142,6 +150,8 @@ public class PDFWatermarkingTest {
 
     @After
     public void cleanup() {
+        
+        ImageIO.setUseCache(imageIOGeIoUseCache);
 
         coreSession.removeDocument(testDocsFolder.getRef());
         coreSession.save();
