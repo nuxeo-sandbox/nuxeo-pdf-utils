@@ -21,7 +21,7 @@
     <module>nuxeo-pdf-utils-mp</module>
   </modules>
   <properties>
-    <nuxeo.pdf.utils.version>8.2-SNAPSHOT</nuxeo.pdf.utils.version>
+    <nuxeo.pdf.utils.version>8.3-SNAPSHOT</nuxeo.pdf.utils.version>
   </properties>
   <dependencyManagement>
     <dependencies>
