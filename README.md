@@ -2,12 +2,14 @@
 
 A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application. The following operations are added:
 
-### Quality Assurance
-QA build status: [![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=Sandbox/sandbox_nuxeo-pdf-utils)](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/lastBuild/org.nuxeo.pdf.utils$nuxeo-pdf-utils-mp/)
+## Quality Assurance
+
+QA build status: [![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=Sandbox/sandbox_nuxeo-pdf-utils)](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/lastBuild/org.nuxeo.pdf.utils$nuxeo-pdf-utils-mp/)
 
 [QA Build Page](http://qa.nuxeo.org/jenkins/job/Sandbox/job/sandbox_nuxeo-pdf-utils/lastBuild/org.nuxeo.pdf.utils$nuxeo-pdf-utils-mp/) to get the Nuxeo Package
 
 ## Operations
+
 These operations can be used in Studio after importing their JSON definitions to the Automation registry.
 
 _A quick reminder: To get the JSON definition of an operation, you can install the plug-in, start nuxeo server then go to {server:port}/nuxeo/site/automation/doc. All available operations are listed, find the one you are looking for and follow the links to get its JSON definition._
@@ -17,17 +19,20 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
   * The input blob must be a pdf
   * The returned blob contains the page numbers, displayed using the parameters (position, font, ...)
     * Notice the input blob is _not_ modified, a copy (+ page numbers) is returned
+
   * The following parameters let you tune the operation:
     * `startAtPage` (default: 1)
     * `startAtNumber` (default: 1)
     * `position`
       * Can be Bottom right, Bottom center, Bottom left, Top right, Top center, or Top left
       * Default: Bottom Right
+
     * `fontName` (default: Helvetica)
     * `fontSize` (default: 16)
     * `hex255Color`
       * Expressed as either 0xrrggbb or #rrggbb (case insensitive)
       * Default value: 0xffffff
+
     * `password`: If the pdf is encrypted, the password that will allow modification.
 
 * **`PDF: Extract Pages`** (id `PDF.ExtractPages`)
@@ -38,17 +43,23 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `startPage`
       * If < 1 => realigned to 1
       * If > `endPage` or > number of pages, a blank PDF is returned
+
     * `endPage`
       * If > number of pages, it is realigned to the number of pages
+
     * `fileName`
       * If not used, the filename will be the original file name plus the page range. For example, if the original name was "mydoc.pdf" and you extract pages 10 to 25, the resulting pdf will have a file name of "mydoc-10-25.pdf".
+
     * `pdfTitle`
       * If not used, title is not set
       * Warning: This is not the `dc:title`. It is the title as stored in the metadata of the PDF.
+
     * `pdfSubject`
       * If not used, subject is not set
+
     * `pdfAuthor`
       * If not used, author is not set
+
     * `password`: If the pdf is encrypted, the password that will allow extraction.
 
 * **`PDF: Merge with Blob(s)`** (id `PDF.MergeWithBlobs`)
@@ -60,6 +71,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * And then the blobs stored in the documents whose IDs are referenced as a `String List` by the Context variable whose name is `toAppendDocIDsVarName`
       * The `xpath` parameter is used to get the blob in each document
       * Optional. Default value is `file:content`
+
     * **Important**: The operation expects the _Context variable names_, _not the values_ of the variables. For example in Studio, say you have a multivalued String field named `myschema:the_ids`. It stores IDs of documents (typically, filled by the user using a "Multiple Documents Suggestion Widget"). In an Automation Chain, to merge the PDF embedded in a these documents with an input blob you would write (see we use `listArticles`, not `@{listArticles}`):
     ```
     . . . previous operations . . .
@@ -73,11 +85,9 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     ```
     * These parameters are optional. Still, you probably want to use at least one of them :-)
 
-
 * **`PDF: PDF: Merge with Document(s)`** (id `PDF.MergeWithDocs`)
   * See the documentation of `PDF: Merge with Blob(s)`
   * The difference is that the input is a document. The operation extracts the blob from the `xpath` field. Notice that it is ok for this blob to be null, the operation will still merge all the other blobs referenced in the parameters
-
 
 * **`PDF: Info to Fields`** (id `PDF.InfoToFields`)
   * Extract the info of the PDF and put them in the fields referenced by the `properties` parameter, return the modified document. If there is no blob or if the blob is not a PDF, all the values referenced in `properties` are cleared (set to empty string, 0, ...)
@@ -86,7 +96,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `save`: If true, the document is saved after its fields have been populated
     * `properties`
       * A `key=value` list (one key-value pair/line), where `key` is the xpath of the destination field and `value` is one of the following (case sensitive):
-      
+
     ```
     File name
     File size
@@ -118,8 +128,8 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     Can Assemble
     Can Print Degraded
     ```
+
     The  permission fields (starting with "Can ...") contain "true" or "false". Every field is "true" if the document is not encrypted or is opened with the _owner_ password.
-    
       * For example, say you have an `InfoOfPDF` schema, prefix `iop`, with misc. fields. You could write:
     ```
     iop:pdf_version=PDF version
@@ -141,6 +151,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `xPosition` (default: 0)
     * `yPosition` (default: 0)
     * `invertY` (default: "false")
+
   * _More details about some `properties`_:
     * `xPosition` and `yPosition` start at the _bottom-left corner_ of each page
     * `alphaColor` is a float with any value between 0.0 and 1.0. Values < 0 or > 1 are reset to the default 0.5
@@ -152,7 +163,9 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `imageContextVarName`: A Context variable which references a Blob containing the image.
     * `imageDocRef`: The path or the ID of a document whose `file:content` field contains the image to use
       * _Notice_: If `imageDocRef`` is used, an `UnrestrictedSession` fetches its blob, so the PDF can be watermarked even if current user has not enough right to read the watermark itself.
+
     * _Notice_: The operation first checks for `imageContextVarName`.
+
   * `x` and `y` start at the bottom-left of the page
   * Dimensions of the image will be * by `scale` (so 1.0 means "Original size", 0.5 means half the size. 4 means four time the size, ...)
 
@@ -162,8 +175,10 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
   * The PDF to use for the watermark can be one of the following:
     * `pdfContextVarName`: A Context variable which references a Blob containing the PDF.
     * `pdfDocRef`: The path or the ID of a document whose `file:content` field contains the PDF to use
-      * _Notice_: If `pdfDocRef`` is used, an `UnrestrictedSession` fetches its blob, so the PDF can be watermarked even if current user has not enough right to read the watermark itself.
+      * _Notice_: If `pdfDocRef`` is used, an`UnrestrictedSession` fetches its blob, so the PDF can be watermarked even if current user has not enough right to read the watermark itself.
+
     * _Notice_: The operation first checks for `pdfContextVarName`.
+
   * This operation uses `PDFBox` to overlay the PDF. The count of pages in each PDF can be different. Basically, the PDF to overlay will be repeated over the PDF to watermark. So for a final PDF of 10 pages:
     * If the overlay has one single page, this page is overlayed on the 10 pages
     * If the overlay has 3 pages, then the overly will be made with pages 1 2 3 1 2 3 1 2 3 1
@@ -198,21 +213,21 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `extractForAccessibility`
     * `assemble`
     * `printDegraded`
-    
+
     So for example, if you pass...
-    
+
     ```
     print=true
     copy=true
     ```
-    
+
     ... the user will only be able to print and copy.
 
 * **`PDF: Remove Encryption`** (id `PDF.RemoveEncryption`)
   * Accepts Blob, Blobs, Document, Document(s)
   * Remove the encryption
   * Returns a _new_ blob, copy of the original one, not encrypted at all.
-  f the pdf already was encrypted, the operaiton still returns a copy of it (not the orginal blob
+  * f the pdf already was encrypted, the operaiton still returns a copy of it (not the orginal blob
   * Parameters:
     * `wnerPwd`: Password to use to decrypt and remove the permissions
     * `xpath`: If the input is `Document`  or `Documents`, the field where to get the blob from (`file:content` by default)
@@ -224,31 +239,48 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `subType`: The subType of the field. This is PDFBox (underlying java tool used to handle the PDF) label. It can be one of the following: `Launch`,  `GoToR` or `URI`.
     * `text`: The text of the link
     * `link`: The link itself (depensin on `subType` of course)
+
   * Parameters
     * `type`: One of the following (case insensitive):
       * `Launch`
       * `Remote Go To`
       * `URI`
+
     * `getAll`: If `true`, the operaiton returns a list of all the links (of category Launch, Remote Go To or URI)
     * Important: If `getAll` is `false`, `type` _must_ be filled (or an error will occur)
 
+* **`Conversion > PDF: Convert to Pictures`** (id `PDF.PDFToPictures`)
+    * Accepts a Document
+    * Parameters:
+        * `fileName` (default: PDF file name)
+            * This name will be applied to each image as `fileName` + `page number` + `.png`. Optional
+        * `xpath` (default: `file:content`)
+            * The path to the PDF blob. Optional
+        * `password`
+            * Password to unlock the PDF if required. Optional
+    * Returns a Blob List of each page of the PDF as PNG image
+    * These images can be used for OCR with [Nuxeo Vision](http://www.nuxeo.com/nuxeo-vision/), for example
 
-## License
-(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+## Support
 
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the GNU Lesser General Public License
-(LGPL) version 2.1 which accompanies this distribution, and is available at
-http://www.gnu.org/licenses/lgpl-2.1.html
+**These features are not part of the Nuxeo Production platform.**
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-Lesser General Public License for more details.
+These solutions are provided for inspiration and we encourage customers to use them as code samples and learning resources.
 
-Contributors:
-Thibaud Arguillere (https://github.com/ThibArg)
+This is a moving project (no API maintenance, no deprecation process, etc.) If any of these solutions are found to be useful for the Nuxeo Platform in general, they will be integrated directly into platform, not maintained here.
+
+
+## Licensing
+
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
 
 ## About Nuxeo
 
-Nuxeo provides a modular, extensible Java-based [open source software platform for enterprise content management](http://www.nuxeo.com) and packaged applications for Document Management, Digital Asset Management and Case Management. Designed by developers for developers, the Nuxeo platform offers a modern architecture, a powerful plug-in model and extensive packaging capabilities for building content applications.
+Nuxeo dramatically improves how content-based applications are built, managed and deployed, making customers more agile, innovative and successful. Nuxeo provides a next generation, enterprise ready platform for building traditional and cutting-edge content oriented applications. Combining a powerful application development environment with SaaS-based tools and a modular architecture, the Nuxeo Platform and Products provide clear business value to some of the most recognizable brands including Verizon, Electronic Arts, Netflix, Sharp, FICO, the U.S. Navy, and Boeing. Nuxeo is headquartered in New York and Paris.
+
+More information is available at [www.nuxeo.com](http://www.nuxeo.com).
+
+## Contributors
+
+Thibaud Arguillere (https://github.com/ThibArg)
