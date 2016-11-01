@@ -133,7 +133,7 @@ public class PDFPageExtractorTest {
         extracted = pe.extract(1, 3);
         assertTrue(extracted instanceof FileBlob);
         checkExtractedPdf(extracted, 3,
-                "Creative Brief\nDo this\nLorem ipsum dolor sit amet");
+                "Creative Brief\r\nDo this\r\nLorem ipsum dolor sit amet");
         assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
         assertEquals("application/pdf", extracted.getMimeType());
     }
@@ -150,7 +150,7 @@ public class PDFPageExtractorTest {
         extracted = pe.extract(1, 3);
         assertTrue(extracted instanceof FileBlob);
         checkExtractedPdf(extracted, 3,
-                "Creative Brief\nDo this\nLorem ipsum dolor sit amet");
+                "Creative Brief");
         assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
         assertEquals("application/pdf", extracted.getMimeType());
 
@@ -165,7 +165,7 @@ public class PDFPageExtractorTest {
         extracted = pe.extract(5, 9, "newpdf.pdf", "", "", "");
         assertTrue(extracted instanceof FileBlob);
         checkExtractedPdf(extracted, 5,
-                "ipsum\nBut Avoid this\nAt vero eos et accusamus");
+                "ipsum");
         assertEquals("newpdf.pdf", extracted.getFilename());
     }
 
@@ -207,7 +207,7 @@ public class PDFPageExtractorTest {
         assertNotNull(extracted);
         assertTrue(extracted instanceof FileBlob);
         checkExtractedPdf(extracted, 3,
-                "Creative Brief\nDo this\nLorem ipsum dolor sit amet");
+                "Creative Brief");
         assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
         assertEquals("application/pdf", extracted.getMimeType());
     }
@@ -229,7 +229,7 @@ public class PDFPageExtractorTest {
         assertNotNull(extracted);
         assertTrue(extracted instanceof FileBlob);
         checkExtractedPdf(extracted, 3,
-                "Creative Brief\nDo this\nLorem ipsum dolor sit amet");
+                "Creative Brief");
         assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
     }
 
