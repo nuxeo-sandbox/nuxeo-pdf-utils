@@ -132,8 +132,7 @@ public class PDFPageExtractorTest {
 
         extracted = pe.extract(1, 3);
         assertTrue(extracted instanceof FileBlob);
-        checkExtractedPdf(extracted, 3,
-                "Creative Brief\r\nDo this\r\nLorem ipsum dolor sit amet");
+        checkExtractedPdf(extracted, 3, "Creative Brief");
         assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
         assertEquals("application/pdf", extracted.getMimeType());
     }
