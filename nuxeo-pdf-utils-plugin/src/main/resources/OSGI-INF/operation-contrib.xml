@@ -3,7 +3,7 @@
 	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
 		point="operations">
 		<operation class="org.nuxeo.pdf.operations.PDFInfoToFieldsOp" />
-		<operation class="org.nuxeo.pdf.operations.WatermarkWithTextOp" />
+		<operation class="org.nuxeo.pdf.operations.PDFWatermarkWithTextOp" />
 		<operation class="org.nuxeo.pdf.operations.WatermarkWithPDFOp" />
 		<operation class="org.nuxeo.pdf.operations.WatermarkWithImageOp" />
 		<operation class="org.nuxeo.pdf.operations.MergePDFsWithDocsInputOp" />
@@ -14,6 +14,7 @@
 		<operation class="org.nuxeo.pdf.operations.PDFEncryptReadOnlyOp" />
 		<operation class="org.nuxeo.pdf.operations.PDFRemoveEncryptionOp" />
 		<operation class="org.nuxeo.pdf.operations.PDFGetLinksOp" />
+		<operation class="org.nuxeo.pdf.operations.PDFToPicturesOp"/>
 	</extension>
 
 </component>

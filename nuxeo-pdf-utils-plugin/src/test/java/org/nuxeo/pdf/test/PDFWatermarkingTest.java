@@ -17,15 +17,7 @@
 
 package org.nuxeo.pdf.test;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
+import com.google.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -43,18 +35,24 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.pdf.PDFWatermarking;
+import org.nuxeo.pdf.operations.PDFWatermarkWithTextOp;
 import org.nuxeo.pdf.operations.WatermarkWithImageOp;
 import org.nuxeo.pdf.operations.WatermarkWithPDFOp;
-import org.nuxeo.pdf.operations.WatermarkWithTextOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
-import com.google.inject.Inject;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @Features({ AutomationFeature.class })
@@ -264,7 +262,7 @@ public class PDFWatermarkingTest {
 
         ctx.setInput(pdfFileWithImagesBlob);
         chain = new OperationChain("testChain");
-        chain.add(WatermarkWithTextOp.ID).set("watermark", watermark).set(
+        chain.add(PDFWatermarkWithTextOp.ID).set("watermark", watermark).set(
                 "properties", props);
         Blob result = (Blob) automationService.run(ctx, chain);
         assertNotNull(result);
