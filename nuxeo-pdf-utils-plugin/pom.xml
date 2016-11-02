@@ -36,6 +36,11 @@
 			<artifactId>bcmail-jdk15</artifactId>
 			<version>1.44</version>
 		</dependency>
+		<dependency>
+			<groupId>com.levigo.jbig2</groupId>
+			<artifactId>levigo-jbig2-imageio</artifactId>
+			<version>1.6.5</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.nuxeo.ecm.automation</groupId>

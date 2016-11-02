@@ -18,6 +18,8 @@
 package org.nuxeo.pdf.test.service;
 
 import com.google.inject.Inject;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
@@ -30,6 +32,7 @@ import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,6 +52,11 @@ public class TestPDFTransformationServiceImageWatermark {
     @Inject
     PDFTransformationService pdfTransformationService;
 
+    @BeforeClass
+    public static void onceExecutedBeforeAll() {
+        // javax.imageio.IIOException: Can't create cache file!
+        ImageIO.setUseCache(false);
+    }
 
     @Test
     public void testNoWatermark() throws IOException {
