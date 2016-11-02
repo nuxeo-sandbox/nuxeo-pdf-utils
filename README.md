@@ -151,6 +151,8 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
     * `xPosition` (default: 0)
     * `yPosition` (default: 0)
     * `invertY` (default: "false")
+    * `invertX` (default: "false")
+    * `relativeCoordinates` (default: "false")
 
   * _More details about some `properties`_:
     * `xPosition` and `yPosition` start at the _bottom-left corner_ of each page
@@ -158,15 +160,16 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
 
 * **`PDF: Watermark with Image`** (id `PDF.WatermarkWithImage`)
   * Accepts a Blob, returns a Blob
-  * Returns a _new_ blob combining the input pdf and an image set on every page (using the `x`, `y`and `scale` parameters)
-  * The image to use for the watermark can be one of the following:
-    * `imageContextVarName`: A Context variable which references a Blob containing the image.
-    * `imageDocRef`: The path or the ID of a document whose `file:content` field contains the image to use
-      * _Notice_: If `imageDocRef`` is used, an `UnrestrictedSession` fetches its blob, so the PDF can be watermarked even if current user has not enough right to read the watermark itself.
-
-    * _Notice_: The operation first checks for `imageContextVarName`.
-
-  * `x` and `y` start at the bottom-left of the page
+  * Returns a _new_ blob combining the input pdf and an image
+    * `properties` is a `key=value` set where `key` can be one of the following. When not used, a default value applies:
+      * `alphaColor` (default: 0.5)
+      * `scale` (default: 0)
+      * `xPosition` (default: 0)
+      * `yPosition` (default: 0)
+      * `invertY` (default: "false")
+      * `invertX` (default: "false")
+      * `relativeCoordinates` (default: "false")
+      
   * Dimensions of the image will be * by `scale` (so 1.0 means "Original size", 0.5 means half the size. 4 means four time the size, ...)
 
 * **`PDF: Watermark with PDF`** (id `PDF.WatermarkWithPDF`)
