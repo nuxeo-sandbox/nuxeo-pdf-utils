@@ -131,9 +131,8 @@ public class PDFTransformationServiceImpl extends DefaultComponent
         // Set the transparency/opacity
         extendedGraphicsState.setNonStrokingAlphaConstant((float) properties.getAlphaColor());
 
-        try {
+        try (PDDocument pdfDoc = PDDocument.load(input.getStream())){
             BufferedImage image = ImageIO.read(watermark.getStream());
-            PDDocument pdfDoc = PDDocument.load(input.getStream());
             PDXObjectImage ximage = new PDPixelMap(pdfDoc, image);
 
             for (Object o : pdfDoc.getDocumentCatalog().getAllPages()) {
@@ -154,24 +153,24 @@ public class PDFTransformationServiceImpl extends DefaultComponent
                     resources.setGraphicsStates(m);
                 }
 
-                PDPageContentStream contentStream = new PDPageContentStream(pdfDoc, page, true, true);
-                contentStream.appendRawCommands("/TransparentState gs\n");
-                contentStream.endMarkedContentSequence();
+                try (PDPageContentStream contentStream = new PDPageContentStream(pdfDoc, page, true, true)) {
+                    contentStream.appendRawCommands("/TransparentState gs\n");
+                    contentStream.endMarkedContentSequence();
 
-                double watermarkWidth = ximage.getWidth()*properties.getScale();
-                double watermarkHeight = ximage.getHeight()*properties.getScale();
+                    double watermarkWidth = ximage.getWidth()*properties.getScale();
+                    double watermarkHeight = ximage.getHeight()*properties.getScale();
 
-                Point2D position = computeTranslationVector(
-                        pageSize.getWidth(),watermarkWidth,
-                        pageSize.getHeight(),watermarkHeight,properties);
+                    Point2D position = computeTranslationVector(
+                            pageSize.getWidth(),watermarkWidth,
+                            pageSize.getHeight(),watermarkHeight,properties);
 
-                contentStream.drawXObject(
-                        ximage,
-                        (float)position.getX(),
-                        (float)position.getY(),
-                        (float)watermarkWidth,
-                        (float)watermarkHeight);
-                contentStream.close();
+                    contentStream.drawXObject(
+                            ximage,
+                            (float)position.getX(),
+                            (float)position.getY(),
+                            (float)watermarkWidth,
+                            (float)watermarkHeight);
+                }
             }
             return saveInTempFile(pdfDoc);
         } catch (COSVisitorException | IOException e) {
