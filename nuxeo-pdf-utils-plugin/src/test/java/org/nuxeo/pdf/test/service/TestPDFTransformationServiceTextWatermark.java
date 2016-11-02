@@ -53,7 +53,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkDefault.pdf"),
+                Paths.get("target","testTextWatermarkDefault.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -67,7 +67,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkInvert.pdf"),
+                Paths.get("target","testTextWatermarkInvert.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -82,7 +82,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkCenter.pdf"),
+                Paths.get("target","testTextWatermarkCenter.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -95,7 +95,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkRotateDown.pdf"),
+                Paths.get("target","testTextWatermarkRotateDown.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -108,7 +108,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkRotateUp.pdf"),
+                Paths.get("target","testTextWatermarkRotateUp.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -124,7 +124,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkRotateDownCenter.pdf"),
+                Paths.get("target","testTextWatermarkRotateDownCenter.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -140,7 +140,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkRotateUpCenter.pdf"),
+                Paths.get("target","testTextWatermarkRotateUpCenter.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -156,7 +156,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkRotateDownInvert.pdf"),
+                Paths.get("target","testTextWatermarkRotateDownInvert.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -171,7 +171,7 @@ public class TestPDFTransformationServiceTextWatermark {
                 blob,WATERMARK,properties);
         Files.copy(
                 result.getStream(),
-                Paths.get("target","testWatermarkRotateUpInvert.pdf"),
+                Paths.get("target","testTextWatermarkRotateUpInvert.pdf"),
                 StandardCopyOption.REPLACE_EXISTING);
     }
 

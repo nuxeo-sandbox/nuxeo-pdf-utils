@@ -47,6 +47,16 @@ public class WatermarkProperties {
 
     protected boolean relativeCoordinates = false;
 
+    protected double scale = 1.0;
+
+    public double getScale() {
+        return scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
     public String getFontFamily() {
         return fontFamily;
     }
@@ -163,6 +173,9 @@ public class WatermarkProperties {
                     break;
                 case "relativeCoordinates":
                     setRelativeCoordinates(Boolean.valueOf(value));
+                    break;
+                case "scale":
+                    setScale(Double.valueOf(value));
                     break;
                 default:
                     throw new NuxeoException("Unknown property: " + key);

@@ -17,12 +17,13 @@
 
 package org.nuxeo.pdf.test;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-
+import com.google.inject.Inject;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,19 +31,24 @@ import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
+import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.pdf.PDFUtils;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
-import com.google.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
-@Features({ AutomationFeature.class })
-@Deploy({ "nuxeo-pdf-utils-plugin" })
+@Features({AutomationFeature.class})
+@Deploy({"nuxeo-pdf-utils-plugin"})
 public class PDFUtilsTest {
 
     // WARNING: If you change this pdf, a lot of tests will fail (count pages,
@@ -181,5 +187,29 @@ public class PDFUtilsTest {
 
         doc.close();
         utils.untrack(doc);
+    }
+
+    public static boolean hasImage(Blob inBlob) {
+        try (PDDocument doc = PDDocument.load(inBlob.getStream())) {
+            for (Object o : doc.getDocumentCatalog().getAllPages()) {
+                PDPage page = (PDPage) o;
+                PDResources pdResources = page.getResources();
+                Map<String, PDXObject> allXObjects = pdResources.getXObjects();
+                assertNotNull(allXObjects);
+                boolean gotIt = false;
+                for (Map.Entry<String, PDXObject> entry : allXObjects.entrySet()) {
+                    PDXObject xobject = entry.getValue();
+                    if (xobject instanceof PDXObjectImage) {
+                        gotIt = true;
+                        break;
+                    }
+                }
+                if (!gotIt) return false;
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

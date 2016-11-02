@@ -40,6 +40,14 @@ public interface PDFTransformationService {
      */
     Blob applyTextWatermark(Blob input, String text, WatermarkProperties properties);
 
-
+    /**
+     * Add an Image watermark to the input PDF blob
+     *
+     * @param input A PDF blob
+     * @param watermark The image to use for the watermark
+     * @param properties the properties of the watermark
+     * @return
+     */
+    Blob applyImageWatermark(Blob input, Blob watermark, WatermarkProperties properties);
 
 }

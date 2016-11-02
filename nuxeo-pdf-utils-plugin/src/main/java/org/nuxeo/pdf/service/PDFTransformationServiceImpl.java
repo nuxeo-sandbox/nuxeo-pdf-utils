@@ -31,6 +31,8 @@ import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
@@ -39,10 +41,12 @@ import org.nuxeo.pdf.service.watermark.WatermarkProperties;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.DefaultComponent;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -117,6 +121,65 @@ public class PDFTransformationServiceImpl extends DefaultComponent
             throw new NuxeoException(e);
         }
     }
+
+    @Override
+    public Blob applyImageWatermark(Blob input, Blob watermark, WatermarkProperties properties) {
+
+        // Set up the graphic state to handle transparency
+        // Define a new extended graphic state
+        PDExtendedGraphicsState extendedGraphicsState = new PDExtendedGraphicsState();
+        // Set the transparency/opacity
+        extendedGraphicsState.setNonStrokingAlphaConstant((float) properties.getAlphaColor());
+
+        try {
+            BufferedImage image = ImageIO.read(watermark.getStream());
+            PDDocument pdfDoc = PDDocument.load(input.getStream());
+            PDXObjectImage ximage = new PDPixelMap(pdfDoc, image);
+
+            for (Object o : pdfDoc.getDocumentCatalog().getAllPages()) {
+                PDPage page = (PDPage) o;
+                PDRectangle pageSize = page.findMediaBox();
+                PDResources resources = page.findResources();
+
+                // Get the defined graphic states.
+                HashMap<String, PDExtendedGraphicsState> graphicsStateDictionary =
+                        (HashMap<String, PDExtendedGraphicsState>) resources.getGraphicsStates();
+                if (graphicsStateDictionary != null) {
+                    graphicsStateDictionary.put("TransparentState",
+                            extendedGraphicsState);
+                    resources.setGraphicsStates(graphicsStateDictionary);
+                } else {
+                    Map<String, PDExtendedGraphicsState> m = new HashMap<>();
+                    m.put("TransparentState", extendedGraphicsState);
+                    resources.setGraphicsStates(m);
+                }
+
+                PDPageContentStream contentStream = new PDPageContentStream(pdfDoc, page, true, true);
+                contentStream.appendRawCommands("/TransparentState gs\n");
+                contentStream.endMarkedContentSequence();
+
+                double watermarkWidth = ximage.getWidth()*properties.getScale();
+                double watermarkHeight = ximage.getHeight()*properties.getScale();
+
+                Point2D position = computeTranslationVector(
+                        pageSize.getWidth(),watermarkWidth,
+                        pageSize.getHeight(),watermarkHeight,properties);
+
+                contentStream.drawXObject(
+                        ximage,
+                        (float)position.getX(),
+                        (float)position.getY(),
+                        (float)watermarkWidth,
+                        (float)watermarkHeight);
+                contentStream.close();
+            }
+            return saveInTempFile(pdfDoc);
+        } catch (COSVisitorException | IOException e) {
+            throw new NuxeoException(e);
+        }
+    }
+
+
 
     public  Point2D computeTranslationVector(double pageWidth, double watermarkWidth,
                                                double pageHeight, double watermarkHeight,
