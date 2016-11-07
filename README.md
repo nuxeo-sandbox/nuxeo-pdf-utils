@@ -157,8 +157,7 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
   * _More details about some `properties`_:
     * `xPosition` and `yPosition` start at the _bottom-left corner_ of each page
     * `alphaColor` is a float with any value between 0.0 and 1.0. Values < 0 or > 1 are reset to the default 0.5
-    * `relativeCoordinates` is a float with any value between 0.0 and 1.0. Values < 0 or > 1 are reset to the default 0.5
-
+ 
 * **`PDF: Watermark with Image`** (id `PDF.WatermarkWithImage`)
   * Accepts a Blob, returns a Blob
   * Returns a _new_ blob combining the input pdf and an image
