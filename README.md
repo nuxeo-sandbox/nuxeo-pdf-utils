@@ -145,29 +145,33 @@ _A quick reminder: To get the JSON definition of an operation, you can install t
   * `properties` is a `key=value` set where `key` can be one of the following. When not used, a default value applies:
     * `fontFamily` (default: "Helvetica")
     * `fontSize` (default: 36.0)
-    * `textRotation` (default: 0)
+    * `textRotation` in counterclockwise degrees (default: 0)
     * `hex255Color` (default: "#000000")
-    * `alphaColor` (default: 0.5)
-    * `xPosition` (default: 0)
-    * `yPosition` (default: 0)
-    * `invertY` (default: "false")
-    * `invertX` (default: "false")
+    * `alphaColor` 0 is full transparency, 1 is solid (default: 0.5)
+    * `xPosition` in pixels from left or between 0 (left) and 1 (right) if `relativeCoordinates` is set to true (default: 0) 
+    * `yPosition` in pixels from bottom or between 0 (bottom) and 1 (top) if `relativeCoordinates` is set to true (default: 0)
+    * `invertY` yPosition starts from the top going down (default: "false")
+    * `invertX` xPosition starts from the right going left (default: "false")
     * `relativeCoordinates` (default: "false")
 
   * _More details about some `properties`_:
     * `xPosition` and `yPosition` start at the _bottom-left corner_ of each page
     * `alphaColor` is a float with any value between 0.0 and 1.0. Values < 0 or > 1 are reset to the default 0.5
+    * `relativeCoordinates` is a float with any value between 0.0 and 1.0. Values < 0 or > 1 are reset to the default 0.5
 
 * **`PDF: Watermark with Image`** (id `PDF.WatermarkWithImage`)
   * Accepts a Blob, returns a Blob
   * Returns a _new_ blob combining the input pdf and an image
+    * `image` is a blob 
     * `properties` is a `key=value` set where `key` can be one of the following. When not used, a default value applies:
-      * `alphaColor` (default: 0.5)
+      * `alphaColor` 0 is full transparency, 1 is solid (default: 0.5)
       * `scale` (default: 0)
-      * `xPosition` (default: 0)
-      * `yPosition` (default: 0)
-      * `invertY` (default: "false")
-      * `invertX` (default: "false")
+      * `xPosition` in pixels from left or between 0 (left) and 1 (right) if `relativeCoordinates` is set to true 
+     (default: 0) 
+      * `yPosition` in pixels from bottom or between 0 (bottom) and 1 (top) if `relativeCoordinates` is set to true 
+     (default: 0)
+      * `invertY` yPosition starts from the top going down (default: "false")
+      * `invertX` xPosition starts from the right going left (default: "false")
       * `relativeCoordinates` (default: "false")
       
   * Dimensions of the image will be * by `scale` (so 1.0 means "Original size", 0.5 means half the size. 4 means four time the size, ...)
