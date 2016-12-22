@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.nuxeo.pdf.utils</groupId>
     <artifactId>nuxeo-pdf-utils-parent</artifactId>
-    <version>8.3-SNAPSHOT</version>
+    <version>8.10-SNAPSHOT</version>
   </parent>
 
   <artifactId>nuxeo-pdf-utils-mp</artifactId>
@@ -15,12 +15,12 @@
     <!-- Base distribution(s) for the MP -->
     <dependency>
       <groupId>org.nuxeo.ecm.distribution</groupId>
-      <artifactId>nuxeo-distribution-cap</artifactId>
+      <artifactId>nuxeo-nxr-server</artifactId>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.nuxeo.ecm.distribution</groupId>
-      <artifactId>nuxeo-distribution-cap</artifactId>
+      <artifactId>nuxeo-nxr-server</artifactId>
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
