@@ -1,6 +1,14 @@
 # nuxeo-pdf-utils
 
-A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application. The following operations are added:
+A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application.
+
+## 2017-01 and LTS 2016
+Nuxeo LST 2016 version now contains operations of this plugin.
+
+See [here](https://doc.nuxeo.com/nxdoc/how-to-use-pdf-conversion-operations-with-studio/) for more details.
+
+We don't deprecate the plugin because we may have to add new custom operation for custom projects.
+
 
 ## Quality Assurance
 
