@@ -182,7 +182,8 @@ public class PDFPageExtractor {
             pdfDoc = PDFUtils.load(pdfBlob, password);
 
             // Get all PDF pages.
-            List<PDPage> pages = pdfDoc.getDocumentCatalog().getAllPages();
+            @SuppressWarnings("unchecked")
+			List<PDPage> pages = pdfDoc.getDocumentCatalog().getAllPages();
 
             int page = 0;
 

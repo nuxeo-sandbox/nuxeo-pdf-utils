@@ -30,18 +30,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
-import org.nuxeo.ecm.automation.OperationChain;
-import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.pdf.PDFWatermarking;
-import org.nuxeo.pdf.operations.PDFWatermarkWithImageOp;
-import org.nuxeo.pdf.operations.PDFWatermarkWithTextOp;
-import org.nuxeo.pdf.operations.WatermarkWithPDFOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -88,7 +82,7 @@ public class PDFWatermarkingTest {
 
     protected DocumentModel testDocsFolder, pdfForWatermarkDoc,
             pngForWatermarkDoc;
-    
+
     protected boolean imageIOGeIoUseCache;
 
     @Inject
@@ -117,7 +111,7 @@ public class PDFWatermarkingTest {
 
     @Before
     public void setup() throws IOException {
-        
+
         // javax.imageio.IIOException: Can't create cache file!
         imageIOGeIoUseCache = ImageIO.getUseCache();
         ImageIO.setUseCache(false);
@@ -148,7 +142,7 @@ public class PDFWatermarkingTest {
 
     @After
     public void cleanup() {
-        
+
         ImageIO.setUseCache(imageIOGeIoUseCache);
 
         coreSession.removeDocument(testDocsFolder.getRef());
@@ -242,41 +236,6 @@ public class PDFWatermarkingTest {
         result = pdfw.watermark();
 
         assertEquals(originalMd5, utils.calculateMd5(result));
-    }
-
-    @Test
-    public void testWatermarkWithTextOperation() throws Exception {
-
-        Properties props = new Properties();
-        props.put("xPosition", "200");
-        props.put("yPosition", "300");
-        props.put("alphaColor", "0.9");
-        props.put("invertY", "true");
-        props.put("textRotation", "45");
-
-        String watermark = "© Toto -" + java.util.UUID.randomUUID().toString();
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(pdfFileWithImagesBlob);
-        chain = new OperationChain("testChain");
-        chain.add(PDFWatermarkWithTextOp.ID).set("watermark", watermark).set(
-                "properties", props);
-        Blob result = (Blob) automationService.run(ctx, chain);
-        assertNotNull(result);
-
-        // When the text is rotated, extracting the full text form a page as is
-        // done in checkHasWatermarkOnAllPages() sometime does not find the
-        // value while it is here. It would require to extends PDFTextStripper
-        // and override processTextPosition. So it is a kind of TODO.
-        // checkHasWatermarkOnAllPages(result, watermark);
-        //
-        // if(kDO_LOCAL_TEST_EXPORT_DESKTOP) {
-        // utils.saveBlobOnDesktop(result, "nuxeo-pdfutils-test",
-        // "test-images-watermarked-rot-operation.pdf");
-        // }
     }
 
     @Test
@@ -388,91 +347,5 @@ public class PDFWatermarkingTest {
                     "test-images-withOverlayJPEG.pdf");
         }
 
-    }
-
-    @Test
-    public void testWatermarkWithImageOperation_withBlob_defaultValues()
-            throws Exception {
-
-        Blob overlayPictureBlob =
-                new FileBlob(getClass().getResourceAsStream("/"+IMAGE_FOR_WATERMARK_PNG));
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-
-        ctx.setInput(pdfFileWithImagesBlob);
-        chain = new OperationChain("testWatermarkWithImageOperation_withBlob_defaultValues");
-        chain.add(PDFWatermarkWithImageOp.ID).set("image",overlayPictureBlob);
-
-        Blob result = (Blob) automationService.run(ctx, chain);
-        assertNotNull(result);
-
-        checkHasImage(result, IMAGE_FOR_WATERMARK_PNG_WIDTH,
-                IMAGE_FOR_WATERMARK_PNG_HEIGHT);
-        if (kDO_LOCAL_TEST_EXPORT_DESKTOP) {
-            utils.saveBlobOnDesktop(result, "nuxeo-pdfutils-test",
-                    "test-images-withOverlayPNG-operation.pdf");
-        }
-    }
-
-    @Test
-    public void testWatermarkWithImageOperation_withBlob_customValues()
-            throws Exception {
-
-        Blob overlayPictureBlob =
-                new FileBlob(getClass().getResourceAsStream("/"+IMAGE_FOR_WATERMARK_PNG));
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(pdfFileWithImagesBlob);
-        chain = new OperationChain("testWatermarkWithImageOperation_withBlob_customValues");
-
-        chain.add(PDFWatermarkWithImageOp.ID).
-                set("image", overlayPictureBlob).
-                set("x", 200).
-                set("y", "400").
-                set("scale", "2.0");
-
-        Blob result = (Blob) automationService.run(ctx, chain);
-        assertNotNull(result);
-
-        checkHasImage(result, IMAGE_FOR_WATERMARK_PNG_WIDTH,
-                IMAGE_FOR_WATERMARK_PNG_HEIGHT);
-        if (kDO_LOCAL_TEST_EXPORT_DESKTOP) {
-            utils.saveBlobOnDesktop(result, "nuxeo-pdfutils-test",
-                    "test-images-withOverlayPNG-operation.pdf");
-        }
-    }
-
-    @Test
-    public void testWatermarkWithPdfOperation_withBlob() throws Exception {
-
-        File overlayPdfFile = FileUtils.getResourceFileFromContext(PDF_FOR_WATERMARK);
-        FileBlob overlayPdfBlob = new FileBlob(overlayPdfFile);
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(pdfFileWithImagesBlob);
-        chain = new OperationChain("testChain");
-
-        ctx.put("theBlobPdf", overlayPdfBlob);
-        chain.add(WatermarkWithPDFOp.ID).set("pdfContextVarName", "theBlobPdf");
-
-        Blob result = (Blob) automationService.run(ctx, chain);
-        assertNotNull(result);
-        if (kDO_LOCAL_TEST_EXPORT_DESKTOP) {
-        utils.saveBlobOnDesktop(result, "nuxeo-pdfutils-test",
-                "test-images-withOverlayPDF-operation.pdf");
-
-        // checkHasImage(result, IMAGE_FOR_WATERMARK_PNG_WIDTH,
-        // IMAGE_FOR_WATERMARK_PNG_HEIGHT);
-
-            utils.saveBlobOnDesktop(result, "nuxeo-pdfutils-test",
-                    "test-images-withOverlayPNG-operation.pdf");
-        }
     }
 }

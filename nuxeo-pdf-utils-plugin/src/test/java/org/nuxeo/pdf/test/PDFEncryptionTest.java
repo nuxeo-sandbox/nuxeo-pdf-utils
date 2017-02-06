@@ -30,16 +30,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
-import org.nuxeo.ecm.automation.OperationChain;
-import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.pdf.PDFEncryption;
-import org.nuxeo.pdf.operations.PDFEncryptReadOnlyOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -188,68 +184,6 @@ public class PDFEncryptionTest {
         assertFalse(pdfDoc.isEncrypted());
         utils.closeAndUntrack(pdfDoc);
 
-    }
-
-    @Test
-    public void testEncryptReadOnlyOperation_Blob() throws Exception {
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(pdfFileBlob);
-        chain = new OperationChain("testChain");
-        // Default values for others.
-        // And testing the Blob -> Blob instance
-        chain.add(PDFEncryptReadOnlyOp.ID).set("ownerPwd", "owner").set("userPwd", "user");
-        Blob result = (Blob) automationService.run(ctx, chain);
-
-        checkIsReadOnly(result, "owner", "user");
-    }
-
-    @Test
-    public void testEncryptReadOnlyOperation_BlobList() throws Exception {
-
-        BlobList bl = new BlobList();
-        bl.add(pdfFileBlob);
-        File f = FileUtils.getResourceFileFromContext(ENCRYPTED_PDF);
-        bl.add(new FileBlob(f));
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(bl);
-        chain = new OperationChain("testChain");
-        // Default values for others.
-        // And testing the Blob -> Blob instance
-        chain.add(PDFEncryptReadOnlyOp.ID)
-             .set("originalOwnerPwd", ENCRYPTED_PDF_PWD)
-             .set("ownerPwd", "owner")
-             .set("userPwd", "user");
-        BlobList result = (BlobList) automationService.run(ctx, chain);
-
-        assertEquals(2, result.size());
-        for(Blob b : result) {
-            checkIsReadOnly(b, "owner", "user");
-        }
-    }
-
-    @Test
-    public void testEncryptReadOnlyOperation_Document() throws Exception {
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(pdfDocModel);
-        chain = new OperationChain("testChain");
-        // Default values for others.
-        // And testing the Blob -> Blob instance
-        chain.add(PDFEncryptReadOnlyOp.ID).set("ownerPwd", "owner").set("userPwd", "user");
-        Blob result = (Blob) automationService.run(ctx, chain);
-
-        checkIsReadOnly(result, "owner", "user");
     }
 
 }

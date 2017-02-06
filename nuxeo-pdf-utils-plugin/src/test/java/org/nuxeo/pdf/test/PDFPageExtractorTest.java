@@ -27,15 +27,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
-import org.nuxeo.ecm.automation.OperationChain;
-import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.pdf.PDFPageExtractor;
-import org.nuxeo.pdf.operations.ExtractPDFPagesOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -196,74 +193,6 @@ public class PDFPageExtractorTest {
         assertEquals("Cool Author", docInfo.getAuthor());
         doc.close();
         utils.untrack(doc);
-    }
-
-    @Test
-    public void testExtractPagesOperation_BlobInput() throws Exception {
-
-        String originalName = pdfFileBlob.getFilename().replace(".pdf", "");
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(pdfFileBlob);
-        chain = new OperationChain("testChain");
-
-        chain.add(ExtractPDFPagesOp.ID).set("startPage", 1).set("endPage", 3);
-        Blob extracted = (Blob) automationService.run(ctx, chain);
-        assertNotNull(extracted);
-        assertTrue(extracted instanceof FileBlob);
-        checkExtractedPdf(extracted, 3,
-                "Creative Brief");
-        assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
-        assertEquals("application/pdf", extracted.getMimeType());
-    }
-
-    @Test
-    public void testExtractPagesOperation_BlobInput_Encrypted() throws Exception {
-
-        String originalName = encryptedPdfFileBlob.getFilename().replace(".pdf", "");
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(encryptedPdfFileBlob);
-        chain = new OperationChain("testChain");
-
-        chain.add(ExtractPDFPagesOp.ID).set("startPage", 1).set("endPage", 3).set("password", "nuxeo");
-        Blob extracted = (Blob) automationService.run(ctx, chain);
-        assertNotNull(extracted);
-        assertTrue(extracted instanceof FileBlob);
-        checkExtractedPdf(extracted, 3,
-                "Creative Brief");
-        assertEquals(originalName + "-1-3.pdf", extracted.getFilename());
-    }
-
-
-    @Test
-    public void testExtractPagesOperationShouldFail_BlobInput()
-            throws Exception {
-
-        File f = FileUtils.getResourceFileFromContext(NOT_A_PDF);
-        FileBlob fb = new FileBlob(f);
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(fb);
-        chain = new OperationChain("testChain");
-
-        chain.add(ExtractPDFPagesOp.ID).set("startPage", 1).set("endPage", 3);
-        try {
-            /*Blob extracted = (Blob)*/
-            automationService.run(ctx, chain);
-            assertTrue("Running the chain should have fail", true);
-        } catch (Exception e) {
-            // We're good
-        }
     }
 
     @Test

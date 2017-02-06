@@ -1,13 +1,14 @@
 # nuxeo-pdf-utils
 
-A set of utilities for who needs to deal with PDFs from a [nuxeo](http://nuxeo.com) application.
+## JAN 2017: DEPRECATION
+This plugin is deprecated, since all its operations have been added to the platform, Nuxeo LTS 2016 (see [here](https://doc.nuxeo.com/nxdoc/how-to-use-pdf-conversion-operations-with-studio/))
 
-## 2017-01 and LTS 2016
-Nuxeo LST 2016 version now contains operations of this plugin.
+Current code contains no operation, we removed them all to avoid conflicts.
 
-See [here](https://doc.nuxeo.com/nxdoc/how-to-use-pdf-conversion-operations-with-studio/) for more details.
-
-We don't deprecate the plugin because we may have to add new custom operation for custom projects.
+<hr />
+# Original README
+<hr />
+A set of utilities for Nuxeo PLatform users who need to deal with PDFs from a [Nuxeo Platform](http://nuxeo.com) application.
 
 
 ## Quality Assurance

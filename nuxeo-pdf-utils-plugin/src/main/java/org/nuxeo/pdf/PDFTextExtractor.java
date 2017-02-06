@@ -18,14 +18,9 @@ package org.nuxeo.pdf;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
-import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -38,7 +33,8 @@ import org.nuxeo.ecm.core.api.DocumentModel;
  */
 public class PDFTextExtractor {
 
-    private static Log log = LogFactory.getLog(PDFTextExtractor.class);
+    @SuppressWarnings("unused")
+	private static Log log = LogFactory.getLog(PDFTextExtractor.class);
 
     protected Blob pdfBlob;
 
@@ -73,7 +69,7 @@ public class PDFTextExtractor {
 
         if (extractedAllAsString == null) {
             PDDocument pdfDoc = null;
-            
+
             try {
                 pdfDoc = PDFUtils.load(pdfBlob, password);
 

@@ -29,14 +29,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.AutomationService;
-import org.nuxeo.ecm.automation.OperationChain;
-import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.pdf.PDFTextExtractor;
-import org.nuxeo.pdf.operations.ExtractTextFromPDFOp;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -127,40 +124,6 @@ public class PDFTextExtractorTest {
 
         extractedLine = textExtractor.extractLastPartOfLine("Contract Number: ");
         assertEquals("123456789", extractedLine);
-    }
-
-    @Test
-    public void testExtractTextOperation() throws Exception {
-
-        OperationChain chain;
-        OperationContext ctx = new OperationContext(coreSession);
-        assertNotNull(ctx);
-
-        ctx.setInput(testDoc);
-
-        chain = new OperationChain("testChain");
-        chain.add(ExtractTextFromPDFOp.ID).set("save", true).set("targetxpath",
-                "dc:description").set("patterntofind", "Contract Number: ").set(
-                "removepatternfromresult", false);
-        DocumentModel documentModified = (DocumentModel) automationService.run(ctx, chain);
-        assertEquals("Contract Number: 123456789", documentModified.getPropertyValue("dc:description"));
-
-        chain = new OperationChain("testChain");
-        chain.add(ExtractTextFromPDFOp.ID).set("save", true).set("targetxpath",
-                "dc:description").set("patterntofind", "toto").set(
-                "removepatternfromresult", false);
-        documentModified = (DocumentModel) automationService.run(ctx, chain);
-        assertNull(documentModified.getPropertyValue("dc:description"));
-
-        chain = new OperationChain("testChain");
-        chain.add(ExtractTextFromPDFOp.ID).set("save", true).set("targetxpath",
-                "dc:description").set("patterntofind", "Contract Number: ").set(
-                "removepatternfromresult", true);
-        documentModified = (DocumentModel) automationService.run(ctx, chain);
-        assertEquals("123456789", documentModified.getPropertyValue("dc:description"));
-
-
-
     }
 
 }
